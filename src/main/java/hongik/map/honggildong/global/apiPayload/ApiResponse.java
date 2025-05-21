@@ -3,9 +3,9 @@ package hongik.map.honggildong.global.apiPayload;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.influy.global.apiPayload.code.BaseCode;
-import com.influy.global.apiPayload.code.ReasonDTO;
-import com.influy.global.apiPayload.code.status.SuccessStatus;
+import hongik.map.honggildong.global.apiPayload.code.BaseCode;
+import hongik.map.honggildong.global.apiPayload.code.ReasonDTO;
+import hongik.map.honggildong.global.apiPayload.code.status.SuccessStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
