@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-@Service
 public interface ReviewService {
     Page<Review> getReviewListOf(Member member, Pageable pageable);
 }

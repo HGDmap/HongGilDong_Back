@@ -11,6 +11,7 @@ import hongik.map.honggildong.domain.review.dto.ReviewResponseDTO;
 import hongik.map.honggildong.domain.review.entity.Review;
 import hongik.map.honggildong.domain.review.service.ReviewService;
 import hongik.map.honggildong.global.apiPayload.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name="회원")
 @RequestMapping("/member")
 public class MemberController {
     private final MemberService memberService; //나중에 구현체로 변경

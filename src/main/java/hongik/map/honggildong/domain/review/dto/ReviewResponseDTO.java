@@ -10,7 +10,7 @@ public class ReviewResponseDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class General {
-
+        private Long id;
     }
 
 }

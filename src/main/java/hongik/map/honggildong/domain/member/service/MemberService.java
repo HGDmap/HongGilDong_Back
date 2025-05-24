@@ -5,7 +5,6 @@ import hongik.map.honggildong.domain.member.entity.Member;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-@Service
 public interface MemberService {
     Member getMemberByUserDetails(UserDetails userDetails);
 
