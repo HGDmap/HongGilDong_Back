@@ -1,5 +1,6 @@
 package hongik.map.honggildong.domain.like.service;
 
+import hongik.map.honggildong.domain.like.entity.Like;
 import hongik.map.honggildong.domain.member.entity.Member;
 import hongik.map.honggildong.domain.review.entity.Review;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,11 @@ import org.springframework.stereotype.Service;
 public class LikeServiceImpl implements LikeService {
     @Override
     public Page<Review> getLikedReviewListOf(Member member, Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public Like createOrDeleteLikeOf(Member member, Review review) {
         return null;
     }
 }
