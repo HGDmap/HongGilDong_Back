@@ -60,7 +60,7 @@ public class FacilityController {
     @PostMapping("/{facilityId}/bookmark")
     public ApiResponse<String> getFacilityReviews(@PathVariable("facilityId") Long facilityId) {
         Facility facility = facilityServiceImpl.getFacilityById(facilityId);
-        //북마크 서비스 구현 후.createBookMark()
+        //윤정 북마크 서비스 구현 후.createBookMark()
         return ApiResponse.onSuccess("나중에 bookmark status dto 추가");
     }
 
