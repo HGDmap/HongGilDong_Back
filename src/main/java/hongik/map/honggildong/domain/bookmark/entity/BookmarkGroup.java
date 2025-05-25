@@ -1,4 +1,4 @@
-package hongik.map.honggildong.domain.event.entity;
+package hongik.map.honggildong.domain.bookmark.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -6,27 +6,18 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
 
 @Entity
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Event extends BaseEntity {
+public class BookmarkGroup extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String eventName;
+    private String folderName;
 
-    private String eventDetail;
-
-    private Date eventStart;
-
-    private Date eventEnd;
-
-    // node entity와 관계 추가
+    private String folderColor;
 }
