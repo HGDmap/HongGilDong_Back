@@ -2,7 +2,7 @@ package hongik.map.honggildong.domain.review.controller;
 
 import hongik.map.honggildong.domain.like.converter.LikeConverter;
 import hongik.map.honggildong.domain.like.dto.LikeResponseDTO;
-import hongik.map.honggildong.domain.like.entity.Like;
+import hongik.map.honggildong.domain.like.entity.Likes;
 import hongik.map.honggildong.domain.like.service.LikeService;
 import hongik.map.honggildong.domain.member.entity.Member;
 import hongik.map.honggildong.domain.member.service.MemberService;
@@ -82,7 +82,7 @@ public class ReviewController {
         Member member = memberServiceImpl.getMemberByUserDetails(userDetails);
         Review review = reviewServiceImpl.getReviewById(reviewId);
 
-        Like like = likeServiceImpl.createOrDeleteLikeOf(member,review);
+        Likes like = likeServiceImpl.createOrDeleteLikeOf(member,review);
         LikeResponseDTO.General body = LikeConverter.toGeneralDTO(like);
 
         return ApiResponse.onSuccess(body);
