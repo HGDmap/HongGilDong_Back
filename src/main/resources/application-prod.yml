@@ -14,7 +14,7 @@ spring:
     init:
       mode: always
   datasource:
-    url: jdbc:mysql://${DB_URL}/${DB_NAME}?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://${DB_URL}:3306/${DB_NAME}?serverTimezone=Asia/Seoul
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
