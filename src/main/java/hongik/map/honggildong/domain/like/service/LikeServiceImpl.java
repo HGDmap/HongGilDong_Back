@@ -1,6 +1,6 @@
 package hongik.map.honggildong.domain.like.service;
 
-import hongik.map.honggildong.domain.like.entity.Like;
+import hongik.map.honggildong.domain.like.entity.Likes;
 import hongik.map.honggildong.domain.member.entity.Member;
 import hongik.map.honggildong.domain.review.entity.Review;
 import org.springframework.data.domain.Page;
@@ -15,7 +15,7 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public Like createOrDeleteLikeOf(Member member, Review review) {
+    public Likes createOrDeleteLikeOf(Member member, Review review) {
         return null;
     }
 }
