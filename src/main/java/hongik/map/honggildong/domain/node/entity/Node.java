@@ -12,6 +12,7 @@ public class Node extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Building building;
 
+    @Enumerated(EnumType.STRING)
     private NodeCode code;
 
     private Double latitude;
@@ -19,6 +20,7 @@ public class Node extends BaseEntity {
     //상대 고도
     private Long height;
     //건물 내 층수
+    @Enumerated(EnumType.STRING)
     private Floor floor;
 
 }
