@@ -11,4 +11,9 @@ public class Building extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String name;
+
+    private Double latitude;
+    private Double longitude;
 }
