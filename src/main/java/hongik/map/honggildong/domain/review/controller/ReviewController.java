@@ -1,9 +1,9 @@
 package hongik.map.honggildong.domain.review.controller;
 
-import hongik.map.honggildong.domain.like.converter.LikeConverter;
-import hongik.map.honggildong.domain.like.dto.LikeResponseDTO;
-import hongik.map.honggildong.domain.like.entity.Likes;
-import hongik.map.honggildong.domain.like.service.LikeService;
+import hongik.map.honggildong.domain.likes.converter.LikeConverter;
+import hongik.map.honggildong.domain.likes.dto.LikeResponseDTO;
+import hongik.map.honggildong.domain.likes.entity.Likes;
+import hongik.map.honggildong.domain.likes.service.LikeService;
 import hongik.map.honggildong.domain.member.entity.Member;
 import hongik.map.honggildong.domain.member.service.MemberService;
 import hongik.map.honggildong.domain.review.converter.ReviewConverter;
