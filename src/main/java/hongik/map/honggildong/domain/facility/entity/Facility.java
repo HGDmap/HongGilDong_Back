@@ -25,4 +25,6 @@ public class Facility extends BaseEntity {
 
     private String openInfo;
 
+    private String mainImg;
+
 }
