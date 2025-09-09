@@ -1,14 +1,33 @@
 package hongik.map.honggildong.domain.member.entity;
 
+import hongik.map.honggildong.domain.bookmarkFolder.entity.BookmarkFolder;
+import hongik.map.honggildong.domain.likes.entity.Likes;
+import hongik.map.honggildong.domain.review.entity.Review;
 import hongik.map.honggildong.global.common.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String name;
+    private String email;
+    private String password; //hash값으로 저장
+    //전공 강의동 나중에 Enum으로 할건지 의논 필요
+    private String nickname;
+    private String profilePic;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Likes> likes;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BookmarkFolder> bookmarkFolders;
+
 }
