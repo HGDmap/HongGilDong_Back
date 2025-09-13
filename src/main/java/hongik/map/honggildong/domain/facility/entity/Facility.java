@@ -5,8 +5,14 @@ import hongik.map.honggildong.domain.building.entity.Building;
 import hongik.map.honggildong.domain.node.entity.Node;
 import hongik.map.honggildong.global.common.BaseEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
+@Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Facility extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

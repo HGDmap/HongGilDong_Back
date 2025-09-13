@@ -5,10 +5,16 @@ import hongik.map.honggildong.domain.likes.entity.Likes;
 import hongik.map.honggildong.domain.review.entity.Review;
 import hongik.map.honggildong.global.common.BaseEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

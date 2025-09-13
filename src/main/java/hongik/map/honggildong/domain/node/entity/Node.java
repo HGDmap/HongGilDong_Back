@@ -4,8 +4,14 @@ import hongik.map.honggildong.domain.building.entity.Building;
 import hongik.map.honggildong.global.common.BaseEntity;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
+@Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Node extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
