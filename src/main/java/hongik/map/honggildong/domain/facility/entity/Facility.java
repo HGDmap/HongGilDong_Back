@@ -1,5 +1,7 @@
 package hongik.map.honggildong.domain.facility.entity;
 
+import hongik.map.honggildong.domain.bookmarkFolder.entity.BookmarkFolder;
+import hongik.map.honggildong.domain.building.entity.Building;
 import hongik.map.honggildong.domain.node.entity.Node;
 import hongik.map.honggildong.global.common.BaseEntity;
 import jakarta.persistence.*;
@@ -13,6 +15,12 @@ public class Facility extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Node node;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private BookmarkFolder bookmarkFolder;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Building building;
+
     private String name;
     private String locationDetail;
 
@@ -20,6 +28,9 @@ public class Facility extends BaseEntity {
     private FacilityType type;
     @Enumerated(EnumType.STRING)
     private HashTag hashTag;
+    //건물 내 층수
+    @Enumerated(EnumType.STRING)
+    private Floor floor;
 
     private String phone;
 

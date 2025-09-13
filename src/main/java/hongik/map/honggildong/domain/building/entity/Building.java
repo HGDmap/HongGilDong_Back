@@ -1,10 +1,9 @@
 package hongik.map.honggildong.domain.building.entity;
 
+import hongik.map.honggildong.domain.bookmarkFolder.entity.BookmarkFolder;
+import hongik.map.honggildong.domain.node.entity.Node;
 import hongik.map.honggildong.global.common.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Building extends BaseEntity {
@@ -16,4 +15,12 @@ public class Building extends BaseEntity {
 
     private Double latitude;
     private Double longitude;
+
+    private String mainImg;
+
+    @OneToOne
+    private Node mainNode;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private BookmarkFolder bookmarkFolder;
 }

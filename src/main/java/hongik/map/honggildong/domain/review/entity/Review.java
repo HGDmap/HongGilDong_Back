@@ -4,8 +4,16 @@ import hongik.map.honggildong.domain.facility.entity.Facility;
 import hongik.map.honggildong.domain.member.entity.Member;
 import hongik.map.honggildong.global.common.BaseEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
-@Entity
+import java.util.ArrayList;
+import java.util.List;
+
+@Builder @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Review extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,5 +29,10 @@ public class Review extends BaseEntity {
 
     private Integer rating;
 
-    //이미지 엔티티 or elementCollection 결정 필요
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "review_image", joinColumns = @JoinColumn(name = "review_id"))
+    @Column(name = "image_url")
+    @OrderColumn(name="image_order")
+    @Builder.Default
+    private List<String> images = new ArrayList<String>();
 }

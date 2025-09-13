@@ -2,12 +2,15 @@ package hongik.map.honggildong.domain.node.entity;
 
 import hongik.map.honggildong.domain.building.entity.Building;
 import hongik.map.honggildong.global.common.BaseEntity;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
 @Entity
 public class Node extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Building building;
@@ -19,8 +22,8 @@ public class Node extends BaseEntity {
     private Double longitude;
     //상대 고도
     private Long height;
-    //건물 내 층수
-    @Enumerated(EnumType.STRING)
-    private Floor floor;
+
+    @Nullable
+    private String mainImg;
 
 }
