@@ -1,14 +1,38 @@
 package hongik.map.honggildong.domain.review.entity;
 
+import hongik.map.honggildong.domain.facility.entity.Facility;
+import hongik.map.honggildong.domain.member.entity.Member;
 import hongik.map.honggildong.global.common.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
-@Entity
+import java.util.ArrayList;
+import java.util.List;
+
+@Builder @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Review extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Facility facility;
+
+    private String content;
+
+    private Integer rating;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "review_image", joinColumns = @JoinColumn(name = "review_id"))
+    @Column(name = "image_url")
+    @OrderColumn(name="image_order")
+    @Builder.Default
+    private List<String> images = new ArrayList<String>();
 }

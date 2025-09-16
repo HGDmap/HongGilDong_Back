@@ -1,6 +1,6 @@
-package hongik.map.honggildong.domain.like.service;
+package hongik.map.honggildong.domain.likes.service;
 
-import hongik.map.honggildong.domain.like.entity.Likes;
+import hongik.map.honggildong.domain.likes.entity.Likes;
 import hongik.map.honggildong.domain.member.entity.Member;
 import hongik.map.honggildong.domain.review.entity.Review;
 import org.springframework.data.domain.Page;

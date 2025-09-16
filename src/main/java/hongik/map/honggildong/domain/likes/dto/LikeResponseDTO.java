@@ -1,4 +1,4 @@
-package hongik.map.honggildong.domain.like.dto;
+package hongik.map.honggildong.domain.likes.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

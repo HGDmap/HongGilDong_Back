@@ -1,6 +1,7 @@
-package hongik.map.honggildong.domain.bookmarkFolder.entity;
+package hongik.map.honggildong.domain.likes.entity;
 
 import hongik.map.honggildong.domain.member.entity.Member;
+import hongik.map.honggildong.domain.review.entity.Review;
 import hongik.map.honggildong.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,16 +12,14 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookmarkFolder extends BaseEntity {
+public class Likes extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-    private String color;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Review review;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
-
-    //북마크 시설 추가? 양방향으로? 아님 굳이 필요X?
 }

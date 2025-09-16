@@ -1,6 +1,6 @@
 package hongik.map.honggildong.domain.member.controller;
 
-import hongik.map.honggildong.domain.like.service.LikeService;
+import hongik.map.honggildong.domain.likes.service.LikeService;
 import hongik.map.honggildong.domain.member.converter.MemberConverter;
 import hongik.map.honggildong.domain.member.dto.MemberRequestDTO;
 import hongik.map.honggildong.domain.member.dto.MemberResponseDTO;
