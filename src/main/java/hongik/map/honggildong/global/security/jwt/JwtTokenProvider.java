@@ -17,20 +17,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
-
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-
-import java.security.Key;
+import io.jsonwebtoken.security.SecurityException;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import static hongik.map.honggildong.global.security.exception.SecurityExceptionCode.*;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Component
 @Slf4j
@@ -93,7 +87,7 @@ public class JwtTokenProvider {
     }
 
     public String reIssueToken(String refreshToken){
-
+        //추후 회원가입 로직 개발 후 수정 예정
         Authentication authentication = getAuthentication(refreshToken);
         String userId = getSubject(refreshToken);
         return generateAccessToken(authentication, userId);
@@ -107,7 +101,7 @@ public class JwtTokenProvider {
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
-        CustomUserDetails principal = customUserDetailsService.loadUserByUsername(claims.get("email", String.class));
+        CustomUserDetails principal = customUserDetailsService.loadUserByUsername(claims.getSubject());
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
