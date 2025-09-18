@@ -5,12 +5,13 @@ import hongik.map.honggildong.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Builder
-@Entity
+@Entity @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Event extends BaseEntity {
