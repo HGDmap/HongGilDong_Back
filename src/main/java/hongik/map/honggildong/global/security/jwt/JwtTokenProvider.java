@@ -58,14 +58,17 @@ public class JwtTokenProvider {
 
     private String generateToken(Authentication authentication, Long expirationMs, String category, String userId) {
 
-        String authorities = authentication.getAuthorities().stream()
+        /**
+         *  현재 시스템에 role 개념이 없으므로 주석 처리
+         */
+        /*String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
+                .collect(Collectors.joining(","));*/
 
         return Jwts.builder()
                 .subject(userId)
                 .claim("category", category)
-                .claim("auth", authorities)
+                //.claim("auth", authorities)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(key)
@@ -96,13 +99,17 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String token){
         Claims claims = parseClaims(token);
 
-        //새로운 accessToken에 넣을 권한 추출 과정
+        /**
+         * 현재 시스템에 role 개념이 없으므로 일단 관련 코드는 구현하지 않는 쪽으로..
+         */
+
+        /*//새로운 accessToken에 넣을 권한 추출 과정
         List<GrantedAuthority> authorities = Stream.of(claims.get("auth", String.class).split(","))
                 .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
 
         CustomUserDetails principal = customUserDetailsService.loadUserByUsername(claims.getSubject());
-        return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+        return new UsernamePasswordAuthenticationToken(principal, token, null);
     }
 
     private Claims parseClaims(String token) {

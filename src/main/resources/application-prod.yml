@@ -33,3 +33,5 @@ spring:
         jdbc:
           batch_size: 50
         dialect: org.hibernate.dialect.MySQLDialect
+springdoc:
+  use-fqn: true

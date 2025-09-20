@@ -1,4 +1,4 @@
-package hongik.map.honggildong.global.config;
+package hongik.map.honggildong.global.security.config;
 
 import hongik.map.honggildong.global.redis.repository.TokenRepository;
 import hongik.map.honggildong.global.security.filter.JwtAuthenticationFilter;
@@ -12,6 +12,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -48,6 +50,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/auth/**"
                         ).permitAll()
+                        .requestMatchers("/auth/random").authenticated()
+                        .anyRequest().authenticated()
                 );
 
         //세션 설정: 무상태로
@@ -65,5 +69,11 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        //BCrypt 인코더 사용
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }
