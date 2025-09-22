@@ -20,6 +20,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import io.jsonwebtoken.security.SecurityException;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -109,7 +111,7 @@ public class JwtTokenProvider {
                 .collect(Collectors.toList());*/
 
         CustomUserDetails principal = customUserDetailsService.loadUserByUsername(claims.getSubject());
-        return new UsernamePasswordAuthenticationToken(principal, token, null);
+        return new UsernamePasswordAuthenticationToken(principal, token, new ArrayList<>());
     }
 
     private Claims parseClaims(String token) {

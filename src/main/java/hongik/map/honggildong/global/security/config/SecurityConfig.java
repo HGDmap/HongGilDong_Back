@@ -47,10 +47,10 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
+                        .requestMatchers("/auth/random").authenticated()
                         .requestMatchers(
                                 "/auth/**"
                         ).permitAll()
-                        .requestMatchers("/auth/random").authenticated()
                         .anyRequest().authenticated()
                 );
 

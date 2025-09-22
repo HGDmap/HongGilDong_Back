@@ -7,6 +7,7 @@ import hongik.map.honggildong.global.security.dto.AuthResponseDTO;
 import hongik.map.honggildong.global.security.jwt.JwtTokenProvider;
 import hongik.map.honggildong.global.security.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,14 +21,13 @@ public class AuthController {
 
     @PostMapping("/signIn")
     @Operation(summary = "로그인", description = "로그인 api, 실제 동작은 시큐리티 필터로 수행합니다.")
-    public ApiResponse<AuthResponseDTO.Login> signIn(@RequestBody AuthRequestDTO.Login request) {
+    public ApiResponse<AuthResponseDTO.Login> signIn(@Valid @RequestBody AuthRequestDTO.Login request) {
         return null;
     }
 
     @PostMapping("/signUp")
     @Operation(summary = "회원가입", description = "이메일 인증 완료 후 최종 회원 가입에 대한 api")
-    public ApiResponse<AuthResponseDTO.Login> signUp(@RequestBody AuthRequestDTO.SignUp request){
-        System.out.println(request.getEmail()+request.getPassword());
+    public ApiResponse<AuthResponseDTO.Login> signUp(@Valid @RequestBody AuthRequestDTO.SignUp request){
 
         AuthResponseDTO.Login body = authService.signUp(request);
 

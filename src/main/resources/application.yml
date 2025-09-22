@@ -1,5 +1,38 @@
+jwt:
+  access:
+    expiration: ${JWT_ACCESS_EXP}
+    header: ${JWT_ACCESS_HEADER}
+
+  refresh:
+    expiration: ${JWT_REFRESH_EXP}
+    header: ${JWT_REFRESH_HEADER}
+
+  secretKey: ${JWT_SECRET}
+
 spring:
   application:
     name: HongGilDong
   profiles:
     active: local
+  sql:
+    init:
+      mode: always
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        order_inserts: true
+        order_updates: true
+        jdbc:
+          batch_size: 50
+        dialect: org.hibernate.dialect.MySQLDialect
+springdoc:
+  use-fqn: true

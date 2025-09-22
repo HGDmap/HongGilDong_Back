@@ -6,6 +6,7 @@ import hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -18,6 +19,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -42,15 +44,28 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
 
         Map<String, String> errors = new LinkedHashMap<>();
 
-        e.getBindingResult().getFieldErrors().stream()
-                .forEach(fieldError -> {
-                    String fieldName = fieldError.getField();
-                    String errorMessage = Optional.ofNullable(fieldError.getDefaultMessage()).orElse("");
-                    errors.merge(fieldName, errorMessage, (existingErrorMessage, newErrorMessage) -> existingErrorMessage + ", " + newErrorMessage);
-                });
+        e.getBindingResult().getFieldErrors().forEach(error ->
+                errors.put(error.getField(), error.getDefaultMessage())
+        );
 
-        return handleExceptionInternalArgs(e, HttpHeaders.EMPTY, ErrorStatus.valueOf("_BAD_REQUEST"), request, errors);
+        ErrorStatus badRequest = ErrorStatus.BAD_REQUEST;
+        ApiResponse<Object> body = ApiResponse.onFailure(badRequest.getCode(),badRequest.getMessage(),errors);
+
+        return ResponseEntity.badRequest().body(body);
     }
+
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Object> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+
+        String message = "데이터 무결성 위반: 중복된 값이거나 참조할 수 없는 데이터입니다.";
+        ErrorStatus internalServerError = ErrorStatus.INTERNAL_SERVER_ERROR;
+        ApiResponse<Object> body = ApiResponse.onFailure(internalServerError.getCode(),message,null);
+
+        return ResponseEntity.badRequest().body(body);
+
+    }
+
 
     @ExceptionHandler
     public ResponseEntity<Object> exception(Exception e, WebRequest request) {
@@ -64,6 +79,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
         ReasonDTO errorReasonHttpStatus = generalException.getErrorReasonHttpStatus();
         return handleExceptionInternal(generalException, errorReasonHttpStatus, null, request);
     }
+
 
     private ResponseEntity<Object> handleExceptionInternal(Exception e, ReasonDTO reason,
                                                            HttpHeaders headers, HttpServletRequest request) {
@@ -116,5 +132,6 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
                 request
         );
     }
+
 }
 

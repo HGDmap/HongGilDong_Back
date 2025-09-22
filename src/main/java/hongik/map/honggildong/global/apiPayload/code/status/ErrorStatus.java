@@ -18,7 +18,7 @@ public enum ErrorStatus implements BaseCode {
 
 
     // 멤버 관련 응답
-    EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT,"MEMBER400","이미 존재하는 이메일입니다.");
+    EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT,"MEMBER409","이미 존재하는 이메일입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
