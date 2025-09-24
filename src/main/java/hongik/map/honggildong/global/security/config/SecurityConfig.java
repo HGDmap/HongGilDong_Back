@@ -30,7 +30,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
 
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider, tokenRepository);
-        jwtAuthenticationFilter.setFilterProcessesUrl("/auth/signIn");
+        jwtAuthenticationFilter.setFilterProcessesUrl("/auth/signin");
 
         http
                 .csrf(auth->auth.disable())

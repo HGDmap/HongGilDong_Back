@@ -19,13 +19,13 @@ public class AuthController {
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @PostMapping("/signIn")
+    @PostMapping("/signin")
     @Operation(summary = "로그인", description = "로그인 api, 실제 동작은 시큐리티 필터로 수행합니다.")
     public ApiResponse<AuthResponseDTO.Login> signIn(@Valid @RequestBody AuthRequestDTO.Login request) {
         return null;
     }
 
-    @PostMapping("/signUp")
+    @PostMapping("/signup")
     @Operation(summary = "회원가입", description = "이메일 인증 완료 후 최종 회원 가입에 대한 api")
     public ApiResponse<AuthResponseDTO.Login> signUp(@Valid @RequestBody AuthRequestDTO.SignUp request){
 
