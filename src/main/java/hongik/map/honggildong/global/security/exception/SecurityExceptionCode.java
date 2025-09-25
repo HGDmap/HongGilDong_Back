@@ -1,24 +1,19 @@
-package hongik.map.honggildong.global.apiPayload.code.status;
+package hongik.map.honggildong.global.security.exception;
 
 import hongik.map.honggildong.global.apiPayload.code.BaseCode;
 import hongik.map.honggildong.global.apiPayload.code.ReasonDTO;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
+@RequiredArgsConstructor
 @Getter
-@AllArgsConstructor
-public enum ErrorStatus implements BaseCode {
-
-    // 기본 에러 응답
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON500", "서버 에러."),
-    BAD_REQUEST(HttpStatus.BAD_REQUEST,"COMMON400","잘못된 요청입니다."),
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"COMMON401","인증이 필요합니다."),
-    FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
-
-
-    // 멤버 관련 응답
-    EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT,"MEMBER409","이미 존재하는 이메일입니다.");
+public enum SecurityExceptionCode implements BaseCode {
+    INVALID_USERNAME_OR_PASSWORD(HttpStatus.NOT_FOUND, "SECURITY400","아이디 또는 비밀번호가 틀립니다."),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "SECURITY401","유효하지 않은 토큰입니다."),
+    REFRESH_EXPIRED(HttpStatus.UNAUTHORIZED, "SECURITY402","로그인이 만료되었습니다. 다시 로그인해 주세요."),
+    INVALID_SIGNATURE(HttpStatus.UNAUTHORIZED, "SECURITY403","유효하지 않은 서명입니다."),
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "SECURITY404","만료된 토큰입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

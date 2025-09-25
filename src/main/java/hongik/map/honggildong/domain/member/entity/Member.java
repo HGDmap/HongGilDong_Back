@@ -7,6 +7,7 @@ import hongik.map.honggildong.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -15,12 +16,14 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
+    @JoinColumn(unique = true)
     private String email;
     private String password; //hash값으로 저장
     //전공 강의동 나중에 Enum으로 할건지 의논 필요

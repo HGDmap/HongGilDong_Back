@@ -1,31 +1,6 @@
-jwt:
-  access:
-    expiration: 1209600000 # 1시간(60분) (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h))
-    header: Authorization
-
-  refresh:
-    expiration: 1209600000 #  (1000L(ms -> s) * 60L(s -> m) * 60L(m -> h) * 24L(h -> 하루) * 14(2주))
-    header: Authorization-refresh
-
-  secretKey: ${JWT_SECRET}
-
 spring:
-  sql:
-    init:
-      mode: always
-  datasource:
-    url: jdbc:mysql://${DB_URL}:3306/${DB_NAME}?serverTimezone=Asia/Seoul
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
   jpa:
-    defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
-        order_inserts: true
-        order_updates: true
-        jdbc:
-          batch_size: 50
-        dialect: org.hibernate.dialect.MySQLDialect
+  datasource:
+    url: jdbc:mysql://${DB_URL}:3306/${DB_NAME}?serverTimezone=Asia/Seoul
