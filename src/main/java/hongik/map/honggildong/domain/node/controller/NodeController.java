@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("node")
@@ -19,6 +21,13 @@ public class NodeController {
     @GetMapping("/{nodeId}")
     public ApiResponse<NodeResponseDTO.Coordinate> getNode(@PathVariable("nodeId") Long nodeId) {
         NodeResponseDTO.Coordinate body = nodeService.getNodeCoordinate(nodeId);
+
+        return ApiResponse.onSuccess(body);
+    }
+
+    @GetMapping("/all")
+    public ApiResponse<List<NodeResponseDTO.Coordinate>> getAllNodes() {
+        List<NodeResponseDTO.Coordinate> body = nodeService.getAllNodeCoordinates();
 
         return ApiResponse.onSuccess(body);
     }
