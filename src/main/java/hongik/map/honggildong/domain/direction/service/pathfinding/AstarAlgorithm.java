@@ -2,6 +2,8 @@ package hongik.map.honggildong.domain.direction.service.pathfinding;
 import hongik.map.honggildong.domain.edge.entity.Edge;
 import hongik.map.honggildong.domain.node.entity.Node;
 import hongik.map.honggildong.global.apiPayload.code.BaseCode;
+import hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus;
+import hongik.map.honggildong.global.apiPayload.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 
 import java.util.*;
@@ -14,8 +16,8 @@ public class AstarAlgorithm {
     private final BaseCode baseCode;
 
     public PathResult findPath(String startId, String goalId) {
-        Node start = graph.getNode(startId).orElseThrow(() -> new baseCode.getReasonHttpStatus(ErrorCode.START_NODE_NOT_FOUND));
-        Node goal  = graph.getNode(goalId).orElseThrow(() -> new baseCode.getReasonHttpStatus(ErrorCode.START_NODE_NOT_FOUND));
+        Node start = graph.getNode(startId).orElseThrow(() -> new GeneralException(ErrorStatus.NODE_NOT_FOUND);
+        Node goal  = graph.getNode(goalId).orElseThrow(() -> new GeneralException(ErrorStatus.NODE_NOT_FOUND);
 
         Map<String, Double> gScore = new HashMap<>();
         Map<String, Double> fScore = new HashMap<>();
