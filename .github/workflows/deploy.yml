@@ -50,7 +50,7 @@ jobs:
               sudo docker rm -f honggildong || true
               cd /home/ubuntu
           
-              if [ \$(sudo docker ps -q -f name=redis) ]; then
+              if [ \$(sudo docker ps -q -f name=redis-stack) ]; then
               echo 'Redis is already running'
               else
               echo 'Starting Redis...'
