@@ -3,6 +3,7 @@ package hongik.map.honggildong.domain.building.entity;
 import hongik.map.honggildong.domain.bookmarkFolder.entity.BookmarkFolder;
 import hongik.map.honggildong.domain.node.entity.Node;
 import hongik.map.honggildong.global.common.BaseEntity;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,7 @@ public class Building extends BaseEntity {
     private Long id;
 
     private String name;
+    private String alias;
 
     private Double latitude;
     private Double longitude;

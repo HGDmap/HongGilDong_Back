@@ -60,6 +60,8 @@ dependencies {
 
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'com.redis:lettucemod:3.8.0'
+
 
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
