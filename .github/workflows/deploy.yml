@@ -54,7 +54,7 @@ jobs:
               echo 'Redis is already running'
               else
               echo 'Starting Redis...'
-              sudo docker compose up -d redis
+              sudo docker compose up -d redis-stack
               fi
           
               sudo docker compose pull spring
