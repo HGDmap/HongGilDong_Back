@@ -2,7 +2,10 @@ package hongik.map.honggildong.global.redis.search.controller;
 
 
 import hongik.map.honggildong.global.apiPayload.ApiResponse;
+import hongik.map.honggildong.global.redis.search.SearchIndexCleaner;
+import hongik.map.honggildong.global.redis.search.SearchIndexInitializer;
 import hongik.map.honggildong.global.redis.search.dto.SearchResultDTO;
+import hongik.map.honggildong.global.redis.search.service.SearchDataLoader;
 import hongik.map.honggildong.global.redis.search.service.SearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +21,8 @@ import java.util.List;
 public class SearchController {
 
     private final SearchService searchService;
+    private final SearchIndexInitializer initializer;
+    private final SearchIndexCleaner cleaner;
 
     @GetMapping("/list/{query}")
     public ApiResponse<List<SearchResultDTO.General>> search(@PathVariable("query") String query) {
@@ -28,13 +33,14 @@ public class SearchController {
     }
 
     //검색어 데이터 추가는 시작 시 자동으로
-    /*@GetMapping("/load")
-    public ApiResponse<String> search() {
+    @GetMapping("/load")
+    public ApiResponse<String> load() {
 
-        String body = searchService.loadData();
+        cleaner.cleanUp();
+        initializer.init();
 
-        return ApiResponse.onSuccess(body);
-    }*/
+        return ApiResponse.onSuccess("인덱스 등록 완료");
+    }
 
     @GetMapping("/indexed-data")
     public ApiResponse<List<String>> findAllIndexedData() {
