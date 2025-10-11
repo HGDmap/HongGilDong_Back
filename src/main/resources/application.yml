@@ -12,6 +12,8 @@ jwt:
 spring:
   application:
     name: HongGilDong
+  config:
+    import: "optional:classpath:env.yaml"
   profiles:
     active: local
   sql:

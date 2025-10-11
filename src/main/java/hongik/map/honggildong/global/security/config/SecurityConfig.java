@@ -45,7 +45,8 @@ public class SecurityConfig {
                                 "/api/v1/auth/**",
                                 "/swagger-ui/**",
                                 "/swagger-resources/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/directions"
                         ).permitAll()
                         .requestMatchers("/auth/random").authenticated()
                         .requestMatchers(

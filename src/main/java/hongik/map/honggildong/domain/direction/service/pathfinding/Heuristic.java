@@ -1,7 +1,9 @@
 package hongik.map.honggildong.domain.direction.service.pathfinding;
 
 import hongik.map.honggildong.domain.node.entity.Node;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Heuristic {
     private Heuristic() {}
     public static final double EARTH_RADIUS_M = 6_371_000.0;
@@ -13,16 +15,9 @@ public class Heuristic {
 
     // 안전한 "가중 맨해튼" 휴리스틱 (권장)
     public static double h(Node a, Node b) {
-        double dHoriz = haversineMeters(a.lat(), a.lon(), b.lat(), b.lon());
-        double dz = Math.abs(a.floor() - b.floor()) * FLOOR_HEIGHT_M;
+        double dHoriz = haversineMeters(a.getLatitude(), a.getLongitude(), b.getLatitude(), b.getLongitude());
+        double dz = Math.abs(a.getHeight() - b.getHeight()) * FLOOR_HEIGHT_M;
         return dHoriz * COST_PER_M_HORIZONTAL_MIN + dz * COST_PER_M_VERTICAL_MIN;
-    }
-
-    // 등방성이라면 3D 유클리드도 가능(단위비용 동일 가정): sqrt(d^2 + dz^2)
-    public static double h3D(Node a, Node b) {
-        double dHoriz = haversineMeters(a.lat(), a.lon(), b.lat(), b.lon());
-        double dz = Math.abs(a.floor() - b.floor()) * FLOOR_HEIGHT_M;
-        return Math.sqrt(dHoriz*dHoriz + dz*dz);
     }
 
     public static double haversineMeters(double lat1, double lon1,
