@@ -38,4 +38,5 @@ out/
 
 ### 빌드 관련 파일, 설정 파일 ###
 /src/main/resources/config/**
+/src/main/resources/application-local.yml
 
