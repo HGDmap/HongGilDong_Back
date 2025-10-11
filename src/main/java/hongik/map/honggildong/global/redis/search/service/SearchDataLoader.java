@@ -82,7 +82,6 @@ public class SearchDataLoader {
             name = ((Building) entity).getName();
             alias = Optional.ofNullable(((Building) entity).getAlias()).orElse("").replace(',',' ');
             id = ((Building) entity).getId();
-            System.out.println("alias:"+alias);
         }else if(entity instanceof Facility){
             name = ((Facility) entity).getName();
             alias = Optional.ofNullable(((Facility) entity).getAlias()).orElse("").replace(',',' ');

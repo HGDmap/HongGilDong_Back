@@ -25,8 +25,6 @@ public class SearchIndexInitializer {
     public void init() {
 
         try {
-            Field<String> name = Field.text("name").sortable(true).build();
-
             commands.ftCreate("idx:search",
                     CreateOptions.<String, String>builder().on(CreateOptions.DataType.HASH)
                             .prefix("doc:")
