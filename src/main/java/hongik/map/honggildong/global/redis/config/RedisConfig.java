@@ -1,5 +1,9 @@
 package hongik.map.honggildong.global.redis.config;
 
+import com.redis.lettucemod.RedisModulesClient;
+import com.redis.lettucemod.api.StatefulRedisModulesConnection;
+import com.redis.lettucemod.api.sync.RedisModulesCommands;
+import io.lettuce.core.RedisURI;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +23,6 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        // 현재는 하나의 Redis만 사용
         return new LettuceConnectionFactory(host, port);
     }
 
@@ -34,6 +37,26 @@ public class RedisConfig {
         template.setHashKeySerializer(stringSerializer);
         template.setHashValueSerializer(stringSerializer);
         return template;
+    }
+
+    /**
+     * 여기서부터 Redis Stack 관련 Bean
+     */
+
+    @Bean(destroyMethod = "close")
+    public RedisModulesClient redisModulesClient() {
+        RedisURI uri = RedisURI.Builder.redis(host, port).build();
+        return RedisModulesClient.create(uri);
+    }
+
+    @Bean(destroyMethod = "close")
+    public StatefulRedisModulesConnection<String, String> redisConnection(RedisModulesClient client) {
+        return client.connect();
+    }
+
+    @Bean
+    public RedisModulesCommands<String, String> redisCommands(StatefulRedisModulesConnection<String, String> connection) {
+        return connection.sync();
     }
 }
 
