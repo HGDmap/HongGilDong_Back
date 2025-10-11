@@ -19,7 +19,7 @@ public class SearchController {
 
     private final SearchService searchService;
 
-    @GetMapping("/{query}")
+    @GetMapping("/list/{query}")
     public ApiResponse<List<SearchResultDTO.General>> search(@PathVariable("query") String query) {
 
         List<SearchResultDTO.General> body = searchService.search(query);

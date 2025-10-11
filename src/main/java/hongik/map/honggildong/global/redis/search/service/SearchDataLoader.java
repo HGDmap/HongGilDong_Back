@@ -73,7 +73,7 @@ public class SearchDataLoader {
         }
     }
 
-    private <T> EntityInfo getNameAndId(T entity){
+    private <T extends BaseEntity> EntityInfo getNameAndId(T entity){
 
         String name = "";
         String alias = "";
