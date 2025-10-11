@@ -1,0 +1,8 @@
+spring:
+  config:
+    import: classpath:config/env.yml
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:mysql://${DB_URL}/${DB_NAME}?serverTimezone=Asia/Seoul

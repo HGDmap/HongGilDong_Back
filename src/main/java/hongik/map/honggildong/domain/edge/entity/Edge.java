@@ -17,10 +17,12 @@ public class Edge extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "start_node_id")
     private Node startNode;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "end_node_id")
     private Node endNode;
 
     //출발 노드와 도착 노드의 위도/경도/고도 값 비교하여 가중치 계산

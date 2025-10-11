@@ -24,6 +24,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus.INTERNAL_SERVER_ERROR;
+
 @Slf4j
 @RestControllerAdvice(annotations = {RestController.class})
 public class ExceptionAdvice extends ResponseEntityExceptionHandler {
@@ -71,7 +73,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> exception(Exception e, WebRequest request) {
         e.printStackTrace();
 
-        return handleExceptionInternalFalse(e, ErrorStatus.INTERNAL_SERVER_ERROR, HttpHeaders.EMPTY, ErrorStatus.INTERNAL_SERVER_ERROR.getHttpStatus(), request, e.getMessage());
+        return handleExceptionInternalFalse(e, INTERNAL_SERVER_ERROR, HttpHeaders.EMPTY, INTERNAL_SERVER_ERROR.getHttpStatus(), request, e.getMessage());
     }
 
     @ExceptionHandler(value = GeneralException.class)
