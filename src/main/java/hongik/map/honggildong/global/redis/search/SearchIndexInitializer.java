@@ -32,6 +32,7 @@ public class SearchIndexInitializer {
                             .prefix("doc:")
                             .build(),
                     Field.text("name").sortable(true).build(),
+                    Field.text("alias").build(),
                     Field.tag("type").build(),
                     Field.numeric("ref_id").sortable(true).build()
             );

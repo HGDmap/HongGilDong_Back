@@ -16,7 +16,9 @@ public class SearchServiceImpl implements SearchService{
     private final SearchDataLoader loader;
 
     public List<SearchResultDTO.General> search(String keyword) {
-        SearchResults<String, String> results = commands.ftSearch("idx:search", "@name:" + keyword + "*");
+        String query = String.format("(@name:%s*) | (@alias:%s*)", keyword, keyword);
+        System.out.println(query);
+        SearchResults<String, String> results = commands.ftSearch("idx:search", query);
 
 
         return results.stream().map(doc -> SearchResultDTO.General

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,11 +43,13 @@ public class SearchDataLoader {
 
     private <T extends BaseEntity> int loadFromRepo(List<T> entities, String type) {
         for (T entity : entities) {
-            NameAndId nameAndId = getNameAndId(entity);
+            EntityInfo nameAndId = getNameAndId(entity);
             String name = nameAndId.getName();
+            String alias = nameAndId.getAlias();
             String id = String.valueOf(nameAndId.getId());
             commands.hset("doc:" + type + ":" + id, Map.of(
                     "name", name,
+                    "alias", alias.replaceAll("\\s+", " "),
                     "type", type,
                     "ref_id", id
             ));
@@ -58,32 +61,39 @@ public class SearchDataLoader {
     }
 
     @Getter
-    private static class NameAndId{
+    private static class EntityInfo {
         String name;
+        String alias;
         Long id;
 
-        NameAndId(String name, Long id) {
+        EntityInfo(String name, String alias, Long id) {
             this.name = name;
             this.id = id;
+            this.alias = alias;
         }
     }
 
-    private <T> NameAndId getNameAndId(T entity){
+    private <T> EntityInfo getNameAndId(T entity){
 
         String name = "";
+        String alias = "";
         Long id = 0L;
         if(entity instanceof Building){
             name = ((Building) entity).getName();
+            alias = Optional.ofNullable(((Building) entity).getAlias()).orElse("").replace(',',' ');
             id = ((Building) entity).getId();
+            System.out.println("alias:"+alias);
         }else if(entity instanceof Facility){
             name = ((Facility) entity).getName();
+            alias = Optional.ofNullable(((Facility) entity).getAlias()).orElse("").replace(',',' ');
             id = ((Facility) entity).getId();
         }else if(entity instanceof Event){
             name = ((Event) entity).getName();
+            alias = Optional.ofNullable(((Event) entity).getAlias()).orElse("").replace(',',' ');
             id = ((Event) entity).getId();
         }
 
-        return new NameAndId(name, id);
+        return new EntityInfo(name, alias, id);
     }
 }
 
