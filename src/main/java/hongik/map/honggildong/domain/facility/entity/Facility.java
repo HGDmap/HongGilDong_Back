@@ -29,6 +29,7 @@ public class Facility extends BaseEntity {
     private Building building;
 
     private String name;
+    private String alias;
     private String locationDetail;
 
     @Enumerated(EnumType.STRING)

@@ -23,6 +23,8 @@ public class Event extends BaseEntity {
     private Node node;
 
     private String name;
+    private String alias;
+
     private String description;
 
     private LocalDateTime startTime;
