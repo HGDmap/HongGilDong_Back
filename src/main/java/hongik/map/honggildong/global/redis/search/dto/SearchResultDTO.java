@@ -1,10 +1,8 @@
 package hongik.map.honggildong.global.redis.search.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchResultDTO {
@@ -13,13 +11,41 @@ public class SearchResultDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
-    public static class General{
+    public static class AutoCompleteGeneral {
         private String name;
         private String type;
         private Long id;
     }
 
-    public static class GeneralList{
-        private List<General> general;
+
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public static class result{
+        private Long id;
+        private String name;
+        private String type;
+        private String description;
+        private Double latitude;
+        private Double longitude;
+        @Builder.Default
+        private Boolean isBookmarked = false;
+        @Builder.Default
+        @Setter
+        private List<String> photoList = new ArrayList<String>();
+
+        public void setIsBookmarkedTrue(){
+            this.isBookmarked = true;
+        }
+    }
+
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public static class resultList{
+        private Integer listSize;
+        private List<result> resultList;
     }
 }
