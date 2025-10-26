@@ -22,6 +22,8 @@ public class Building extends BaseEntity {
     private String name;
     private String alias;
 
+    private String description;
+
     private Double latitude;
     private Double longitude;
 
