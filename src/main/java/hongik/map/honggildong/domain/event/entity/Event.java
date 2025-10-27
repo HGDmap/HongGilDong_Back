@@ -29,4 +29,6 @@ public class Event extends BaseEntity {
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+
+    private String mainImg;
 }

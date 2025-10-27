@@ -1,5 +1,7 @@
 package hongik.map.honggildong.domain.bookmarkFolder.entity;
 
+import hongik.map.honggildong.domain.building.entity.Building;
+import hongik.map.honggildong.domain.facility.entity.Facility;
 import hongik.map.honggildong.domain.member.entity.Member;
 import hongik.map.honggildong.global.common.BaseEntity;
 import jakarta.persistence.*;
@@ -23,5 +25,9 @@ public class BookmarkFolder extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    //북마크 시설 추가? 양방향으로? 아님 굳이 필요X?
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Building building;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Facility facility;
 }

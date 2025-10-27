@@ -1,11 +1,14 @@
 package hongik.map.honggildong.global.redis.search.service;
 
+import hongik.map.honggildong.domain.member.entity.Member;
 import hongik.map.honggildong.global.redis.search.dto.SearchResultDTO;
 
 import java.util.List;
 
 public interface SearchService {
-    List<SearchResultDTO.General> search(String keyword);
+    List<SearchResultDTO.AutoCompleteGeneral> autoComplete(String keyword);
 
     List<String> findAllIndexedData();
+
+    SearchResultDTO.resultList search(String query, Member member);
 }
