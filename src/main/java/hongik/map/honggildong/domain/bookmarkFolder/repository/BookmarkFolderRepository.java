@@ -18,8 +18,9 @@ public interface BookmarkFolderRepository extends JpaRepository<BookmarkFolder,L
         END AS type,
         COALESCE(b.building.id, b.facility.id) AS id
     FROM BookmarkFolder b
-    WHERE b.building.id IN :buildingIds
-       OR b.facility.id IN :facilityIds
+    WHERE (b.building.id IN :buildingIds
+       OR b.facility.id IN :facilityIds)
+       AND b.member.id = :userId
 """)
     List<JPQLBookmarkDTO.SearchResult> findAllBookmarksFromSearch(@Param("userId") Long userId, @Param("buildingIds") List<Long> buildingIds, @Param("facilityIds") List<Long> facilityIds);
 }
