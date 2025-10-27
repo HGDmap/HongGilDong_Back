@@ -19,7 +19,7 @@ public interface SearchRepository extends JpaRepository<Building, Long> {
         b.latitude AS latitude,
         b.longitude AS longitude,
         b.main_node_id AS nodeId
-        FROM building b 
+        FROM building b
         WHERE b.name LIKE concat(:query,'%')
     
         UNION ALL
@@ -33,7 +33,7 @@ public interface SearchRepository extends JpaRepository<Building, Long> {
         n.latitude AS latitude,
         n.longitude AS longitude,
         n.id AS nodeId
-        FROM Event e JOIN Node n ON e.node_id = n.id
+        FROM event e JOIN Node n ON e.node_id = n.id
         WHERE e.name LIKE concat(:query,'%')
     
         UNION ALL
@@ -69,7 +69,7 @@ public interface SearchRepository extends JpaRepository<Building, Long> {
         e.name AS name,
         e.alias AS alias,
         e.node_id AS nodeId
-        FROM Event e
+        FROM event e
     
         UNION ALL
     
