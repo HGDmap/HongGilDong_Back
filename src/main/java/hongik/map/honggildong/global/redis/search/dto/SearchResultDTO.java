@@ -29,6 +29,7 @@ public class SearchResultDTO {
         private String description;
         private Double latitude;
         private Double longitude;
+        private Long nodeId;
         @Builder.Default
         private Boolean isBookmarked = false;
         @Builder.Default

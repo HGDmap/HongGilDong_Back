@@ -90,6 +90,7 @@ public class SearchServiceImpl implements SearchService{
                     .description((String) raw[3])
                     .latitude((Double)raw[5])
                     .longitude((Double)raw[6])
+                    .nodeId((Long)raw[7])
                     .build();
             if(member!=null){
                 if(bookmarkedSet.contains(Pair.of(finalResult.getType(), finalResult.getId())))
