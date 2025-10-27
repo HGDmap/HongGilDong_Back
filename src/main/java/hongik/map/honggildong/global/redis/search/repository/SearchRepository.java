@@ -52,4 +52,35 @@ public interface SearchRepository extends JpaRepository<Building, Long> {
     """, nativeQuery = true)
     List<Object[]> findAllType(@Param("query") String query);
 
+    @Query(value = """
+        SELECT
+        'BUILDING' AS type,
+        b.id AS id,
+        b.name AS name,
+        b.alias AS alias,
+        b.main_node_id AS nodeId
+        FROM building b
+    
+        UNION ALL
+    
+        SELECT
+        'EVENT' AS type,
+        e.id AS id,
+        e.name AS name,
+        e.alias AS alias,
+        e.node_id AS nodeId
+        FROM Event e
+    
+        UNION ALL
+    
+        SELECT
+        'FACILITY' AS type,
+        f.id AS id,
+        f.name AS name,
+        f.alias AS alias,
+        f.node_id AS nodeId
+        FROM facility f
+    """, nativeQuery = true)
+    List<Object[]> indexingAll();
+
 }

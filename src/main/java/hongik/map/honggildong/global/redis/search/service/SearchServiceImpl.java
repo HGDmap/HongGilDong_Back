@@ -34,6 +34,7 @@ public class SearchServiceImpl implements SearchService{
                 .name(doc.get("name"))
                 .type(doc.get("type"))
                 .id(Long.valueOf(doc.get("ref_id")))
+                .nodeId(Long.valueOf(doc.get("node_id")))
                 .build()).toList();
     }
 

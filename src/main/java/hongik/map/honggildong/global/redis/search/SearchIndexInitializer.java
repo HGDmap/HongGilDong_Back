@@ -32,7 +32,8 @@ public class SearchIndexInitializer {
                     Field.text("name").sortable(true).build(),
                     Field.text("alias").build(),
                     Field.tag("type").build(),
-                    Field.numeric("ref_id").sortable(true).build()
+                    Field.numeric("ref_id").sortable(true).build(),
+                    Field.numeric("node_id").build()
             );
 
             searchDataLoader.loadAll();

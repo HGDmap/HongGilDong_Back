@@ -15,6 +15,7 @@ public class SearchResultDTO {
         private String name;
         private String type;
         private Long id;
+        private Long nodeId;
     }
 
 
