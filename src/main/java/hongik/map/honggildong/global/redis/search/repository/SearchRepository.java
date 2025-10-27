@@ -33,7 +33,7 @@ public interface SearchRepository extends JpaRepository<Building, Long> {
         n.latitude AS latitude,
         n.longitude AS longitude,
         n.id AS nodeId
-        FROM event e JOIN Node n ON e.node_id = n.id
+        FROM event e JOIN node n ON e.node_id = n.id
         WHERE e.name LIKE concat(:query,'%')
     
         UNION ALL
@@ -47,7 +47,7 @@ public interface SearchRepository extends JpaRepository<Building, Long> {
         n.latitude AS latitude,
         n.longitude AS longitude,
         n.id AS nodeId
-        FROM facility f JOIN Node n ON f.node_id = n.id
+        FROM facility f JOIN node n ON f.node_id = n.id
         WHERE f.name LIKE concat(:query,'%')
     """, nativeQuery = true)
     List<Object[]> findAllType(@Param("query") String query);
