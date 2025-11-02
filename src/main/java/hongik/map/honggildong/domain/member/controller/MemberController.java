@@ -8,6 +8,7 @@ import hongik.map.honggildong.domain.member.entity.Member;
 import hongik.map.honggildong.domain.member.service.MemberService;
 import hongik.map.honggildong.domain.review.converter.ReviewConverter;
 import hongik.map.honggildong.domain.review.dto.ReviewResponseDTO;
+import hongik.map.honggildong.domain.review.dto.jpql.JPQLReviewAndWriter;
 import hongik.map.honggildong.domain.review.entity.Review;
 import hongik.map.honggildong.domain.review.service.ReviewService;
 import hongik.map.honggildong.global.apiPayload.ApiResponse;
@@ -19,6 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,11 +63,12 @@ public class MemberController {
 
     //내가 쓴 리뷰 리스트 조회
     @GetMapping("/mypage/reviews")
-    public ApiResponse<Page<ReviewResponseDTO.General>> getMyReviews(@AuthenticationPrincipal UserDetails userDetails,
+    public ApiResponse<ReviewResponseDTO.MyGeneralPage> getMyReviews(@AuthenticationPrincipal UserDetails userDetails,
                                                                      @ParameterObject Pageable pageable) {
         Member member = memberService.getMemberByUserDetails(userDetails);
         Page<Review> reviews = reviewService.getReviewListOf(member,pageable);
-        Page<ReviewResponseDTO.General> body = reviews.map(ReviewConverter::toGeneralDTO);
+        List<Long> likedReviewIds = new ArrayList<>();
+        ReviewResponseDTO.MyGeneralPage body = ReviewConverter.toMyGeneralPage(reviews,likedReviewIds);
 
         return ApiResponse.onSuccess(body);
     }
@@ -73,8 +78,8 @@ public class MemberController {
     public ApiResponse<Page<ReviewResponseDTO.General>> getMyLikes(@AuthenticationPrincipal UserDetails userDetails,
                                                                    @ParameterObject Pageable pageable) {
         Member member = memberService.getMemberByUserDetails(userDetails);
-        Page<Review> reviews = likeService.getLikedReviewListOf(member,pageable);
-        Page<ReviewResponseDTO.General> body = reviews.map(ReviewConverter::toGeneralDTO);
+        Page<JPQLReviewAndWriter> reviews = likeService.getLikedReviewListOf(member,pageable);
+        Page<ReviewResponseDTO.General> body = reviews.map(rw->ReviewConverter.toGeneralDTO(rw,true));
 
         return ApiResponse.onSuccess(body);
     }
