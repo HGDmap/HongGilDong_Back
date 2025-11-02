@@ -12,6 +12,7 @@ import hongik.map.honggildong.domain.member.repository.MemberRepository;
 import hongik.map.honggildong.domain.node.entity.Node;
 import hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus;
 import hongik.map.honggildong.global.apiPayload.exception.GeneralException;
+import hongik.map.honggildong.global.security.service.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -30,10 +31,10 @@ public class BookmarkFolderServiceImpl implements BookmarkFolderService {
     private final FacilityRepository facilityRepository;
 
     @Override
-    public BookmarkFolderResponseDTO.Single createBookmarkFolder(UserDetails userDetails,
+    public BookmarkFolderResponseDTO.Single createBookmarkFolder(CustomUserDetails userDetails,
                                                                  BookmarkFolderRequestDTO.Create createFolderRequestDTO) {
-        Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-
+        Member member = userDetails.getMember();
+        
         BookmarkFolder bookmarkFolder = BookmarkFolder.builder()
                 .name(createFolderRequestDTO.getFolderName())
                 .color(createFolderRequestDTO.getFolderColor())
@@ -51,10 +52,12 @@ public class BookmarkFolderServiceImpl implements BookmarkFolderService {
 
     @Override
     public BookmarkFolderResponseDTO.Single updateBookmarkFolder(Long folderId,
-                                                                 UserDetails userDetails,
+                                                                 CustomUserDetails userDetails,
                                                                  BookmarkFolderRequestDTO.Update updateFolderRequestDTO) {
-        Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-        BookmarkFolder bookmarkFolder = bookmarkFolderRepository.findById(folderId).orElseThrow(() -> new GeneralException(ErrorStatus.BOOKMARK_FOLDER_NOT_FOUND));
+        Member member = userDetails.getMember();
+
+        BookmarkFolder bookmarkFolder = bookmarkFolderRepository.findById(folderId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKMARK_FOLDER_NOT_FOUND));
 
         List<Facility> facilities = facilityRepository.findAllByBookmarkFolder(bookmarkFolder);
 
@@ -79,9 +82,8 @@ public class BookmarkFolderServiceImpl implements BookmarkFolderService {
 
     @Transactional
     @Override
-    public void deleteBookmarkFolder(Long folderId, UserDetails userDetails) {
-        Member member = memberRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+    public void deleteBookmarkFolder(Long folderId, CustomUserDetails userDetails) {
+        Member member = userDetails.getMember();
 
         BookmarkFolder folder = bookmarkFolderRepository.findById(folderId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKMARK_FOLDER_NOT_FOUND));
@@ -94,9 +96,8 @@ public class BookmarkFolderServiceImpl implements BookmarkFolderService {
 
     @Transactional
     @Override
-    public void deleteBookmark(Long facilityId, UserDetails userDetails) {
-        Member member = memberRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+    public void deleteBookmark(Long facilityId, CustomUserDetails userDetails) {
+        Member member = userDetails.getMember();
 
         Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new GeneralException(ErrorStatus.FACILITY_NOT_FOUND));
 
@@ -104,10 +105,10 @@ public class BookmarkFolderServiceImpl implements BookmarkFolderService {
     }
 
     @Override
-    public BookmarkFolderResponseDTO.Single addBookmark(UserDetails userDetails,
+    public BookmarkFolderResponseDTO.Single addBookmark(CustomUserDetails userDetails,
                                                          Long folderId,
                                                          Long facilityId) {
-        Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = userDetails.getMember();
         BookmarkFolder bookmarkFolder = bookmarkFolderRepository.findById(folderId).orElseThrow(() -> new GeneralException(ErrorStatus.BOOKMARK_FOLDER_NOT_FOUND));
         Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new GeneralException(ErrorStatus.FACILITY_NOT_FOUND));
 
@@ -135,7 +136,7 @@ public class BookmarkFolderServiceImpl implements BookmarkFolderService {
     @Override
     public BookmarkFolderResponseDTO.Single getBookmarks(Long folderId,
                                                          UserDetails userDetails) {
-        Member member = memberRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = userDetails.getMember();
         BookmarkFolder bookmarkFolder = bookmarkFolderRepository.findById(folderId).orElseThrow(() -> new GeneralException(ErrorStatus.BOOKMARK_FOLDER_NOT_FOUND));
 
         List<Facility> facilities = facilityRepository.findAllByBookmarkFolder(bookmarkFolder);

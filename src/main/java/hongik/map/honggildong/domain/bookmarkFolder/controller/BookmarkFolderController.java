@@ -4,6 +4,7 @@ import hongik.map.honggildong.domain.bookmarkFolder.dto.BookmarkFolderRequestDTO
 import hongik.map.honggildong.domain.bookmarkFolder.dto.BookmarkFolderResponseDTO;
 import hongik.map.honggildong.domain.bookmarkFolder.service.BookmarkFolderService;
 import hongik.map.honggildong.global.apiPayload.ApiResponse;
+import hongik.map.honggildong.global.security.service.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,7 +18,7 @@ public class BookmarkFolderController {
     private final BookmarkFolderService bookmarkFolderService;
 
     @PostMapping
-    public ApiResponse<BookmarkFolderResponseDTO.Single> createFolder(@AuthenticationPrincipal UserDetails userDetails,
+    public ApiResponse<BookmarkFolderResponseDTO.Single> createFolder(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                       @RequestBody BookmarkFolderRequestDTO.Create createFolderRequestDTO) {
         BookmarkFolderResponseDTO.Single body = bookmarkFolderService.createBookmarkFolder(userDetails, createFolderRequestDTO);
         return ApiResponse.onSuccess(body);
