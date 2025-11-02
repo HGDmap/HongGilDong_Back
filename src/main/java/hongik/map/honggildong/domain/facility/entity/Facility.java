@@ -5,13 +5,11 @@ import hongik.map.honggildong.domain.building.entity.Building;
 import hongik.map.honggildong.domain.node.entity.Node;
 import hongik.map.honggildong.global.common.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Builder
 @Entity @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Facility extends BaseEntity {
