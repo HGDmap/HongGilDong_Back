@@ -1,7 +1,6 @@
 package hongik.map.honggildong.domain.review.repository;
 
 import hongik.map.honggildong.domain.facility.entity.Facility;
-import hongik.map.honggildong.domain.review.dto.jpql.JPQLReviewAndWriter;
 import hongik.map.honggildong.domain.review.entity.Review;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,13 +11,11 @@ import org.springframework.data.repository.query.Param;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("""
-    SELECT new hongik.map.honggildong.domain.review.dto.jpql.JPQLReviewAndWriter(
-    r.id, r.content, m.id, m.nickname,m.profilePic,r.createdAt,r.updatedAt
-    )
+    SELECT DISTINCT r
     FROM Review r
-    JOIN r.member m
+    JOIN FETCH r.member
+    LEFT JOIN FETCH r.images
     WHERE r.facility = :facility
-    
     """)
-    Page<JPQLReviewAndWriter> findAllByFacility(@Param("facility") Facility facility, Pageable pageable);
+    Page<Review> findAllByFacility(@Param("facility") Facility facility, Pageable pageable);
 }

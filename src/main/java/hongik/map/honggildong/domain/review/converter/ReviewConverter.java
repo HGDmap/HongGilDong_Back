@@ -1,31 +1,30 @@
 package hongik.map.honggildong.domain.review.converter;
 
 import hongik.map.honggildong.domain.review.dto.ReviewResponseDTO;
-import hongik.map.honggildong.domain.review.dto.jpql.JPQLReviewAndWriter;
 import hongik.map.honggildong.domain.review.entity.Review;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public class ReviewConverter {
-    public static ReviewResponseDTO.General toGeneralDTO(JPQLReviewAndWriter review, Boolean isLiked) {
+    public static ReviewResponseDTO.General toGeneralDTO(Review review, Boolean isLiked) {
         return ReviewResponseDTO.General.builder()
-                .id(review.getReviewId())
-                .writerId(review.getWriterId())
-                .writerNickname(review.getWriterNickname())
-                .writerProfilePic(review.getWriterProfilePic())
+                .id(review.getId())
+                .writerId(review.getMember().getId())
+                .writerNickname(review.getMember().getNickname())
+                .writerProfilePic(review.getMember().getProfilePic())
                 .content(review.getContent())
                 .createdAt(review.getCreatedAt())
                 .updatedAt(review.getUpdatedAt())
-                //.photoList(review.getPhotoList())
+                .photoList(review.getImages())
                 .isLiked(isLiked)
                 .build();
     }
 
-    public static ReviewResponseDTO.GeneralPage toGeneralPageDTO(Page<JPQLReviewAndWriter> reviews, List<Long> likedReviewIds) {
+    public static ReviewResponseDTO.GeneralPage toGeneralPageDTO(Page<Review> reviews, List<Long> likedReviewIds) {
 
         List<ReviewResponseDTO.General> content = reviews.getContent().stream().map(review -> {
-            Boolean isLiked = likedReviewIds.contains(review.getReviewId());
+            Boolean isLiked = likedReviewIds.contains(review.getId());
             return toGeneralDTO(review, isLiked);
         }).toList();
 

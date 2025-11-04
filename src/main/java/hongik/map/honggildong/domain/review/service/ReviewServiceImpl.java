@@ -6,7 +6,6 @@ import hongik.map.honggildong.domain.member.entity.Member;
 import hongik.map.honggildong.domain.review.converter.ReviewConverter;
 import hongik.map.honggildong.domain.review.dto.ReviewRequestDTO;
 import hongik.map.honggildong.domain.review.dto.ReviewResponseDTO;
-import hongik.map.honggildong.domain.review.dto.jpql.JPQLReviewAndWriter;
 import hongik.map.honggildong.domain.review.entity.Review;
 import hongik.map.honggildong.domain.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +32,8 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ReviewResponseDTO.GeneralPage getReviewListOf(Facility facility, Member member, Pageable pageable) {
 
-        Page<JPQLReviewAndWriter> reviewPage = reviewRepository.findAllByFacility(facility, pageable);
-        List<Long> reviewIds = reviewPage.getContent().stream().map(JPQLReviewAndWriter::getReviewId).toList();
+        Page<Review> reviewPage = reviewRepository.findAllByFacility(facility, pageable);
+        List<Long> reviewIds = reviewPage.getContent().stream().map(Review::getId).toList();
 
         List<Long> likedReviews = likeRepository.findAllByReviewsAndMemberId(member.getId(),reviewIds);
 
@@ -47,12 +46,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public JPQLReviewAndWriter getReviewAndWriterById(Long reviewId) {
-        return null;
-    }
-
-    @Override
-    public JPQLReviewAndWriter createReviewOf(Member member, ReviewRequestDTO request) {
+    public Review createReviewOf(Member member, ReviewRequestDTO request) {
         return null;
     }
 
@@ -62,7 +56,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public JPQLReviewAndWriter updateReviewOf(Member member, Review review) {
+    public Review updateReviewOf(Member member, Review review) {
         return null;
     }
 }

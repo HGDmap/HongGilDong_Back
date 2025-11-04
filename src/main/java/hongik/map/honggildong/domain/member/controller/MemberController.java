@@ -8,7 +8,6 @@ import hongik.map.honggildong.domain.member.entity.Member;
 import hongik.map.honggildong.domain.member.service.MemberService;
 import hongik.map.honggildong.domain.review.converter.ReviewConverter;
 import hongik.map.honggildong.domain.review.dto.ReviewResponseDTO;
-import hongik.map.honggildong.domain.review.dto.jpql.JPQLReviewAndWriter;
 import hongik.map.honggildong.domain.review.entity.Review;
 import hongik.map.honggildong.domain.review.service.ReviewService;
 import hongik.map.honggildong.global.apiPayload.ApiResponse;
@@ -78,7 +77,7 @@ public class MemberController {
     public ApiResponse<Page<ReviewResponseDTO.General>> getMyLikes(@AuthenticationPrincipal UserDetails userDetails,
                                                                    @ParameterObject Pageable pageable) {
         Member member = memberService.getMemberByUserDetails(userDetails);
-        Page<JPQLReviewAndWriter> reviews = likeService.getLikedReviewListOf(member,pageable);
+        Page<Review> reviews = likeService.getLikedReviewListOf(member,pageable);
         Page<ReviewResponseDTO.General> body = reviews.map(rw->ReviewConverter.toGeneralDTO(rw,true));
 
         return ApiResponse.onSuccess(body);

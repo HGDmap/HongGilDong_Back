@@ -9,7 +9,6 @@ import hongik.map.honggildong.domain.member.service.MemberService;
 import hongik.map.honggildong.domain.review.converter.ReviewConverter;
 import hongik.map.honggildong.domain.review.dto.ReviewRequestDTO;
 import hongik.map.honggildong.domain.review.dto.ReviewResponseDTO;
-import hongik.map.honggildong.domain.review.dto.jpql.JPQLReviewAndWriter;
 import hongik.map.honggildong.domain.review.entity.Review;
 import hongik.map.honggildong.domain.review.service.ReviewService;
 import hongik.map.honggildong.global.apiPayload.ApiResponse;
@@ -35,7 +34,7 @@ public class ReviewController {
                                                             @AuthenticationPrincipal UserDetails userDetails) {
         Member member = memberServiceImpl.getMemberByUserDetails(userDetails);
 
-        JPQLReviewAndWriter review = reviewServiceImpl.getReviewAndWriterById(reviewId);
+        Review review = reviewServiceImpl.getReviewById(reviewId);
         //추후 수정
         Boolean isLiked = true;
         ReviewResponseDTO.General body = ReviewConverter.toGeneralDTO(review, isLiked);
@@ -49,7 +48,7 @@ public class ReviewController {
                                                                @AuthenticationPrincipal UserDetails userDetails) {
         Member member = memberServiceImpl.getMemberByUserDetails(userDetails);
 
-        JPQLReviewAndWriter review = reviewServiceImpl.createReviewOf(member, request);
+        Review review = reviewServiceImpl.createReviewOf(member, request);
         ReviewResponseDTO.General body = ReviewConverter.toGeneralDTO(review, false);
 
         return ApiResponse.onSuccess(body);
