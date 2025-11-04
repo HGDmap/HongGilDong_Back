@@ -19,6 +19,9 @@ public enum ErrorStatus implements BaseCode {
     // 멤버 관련 응답
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT,"MEMBER409","이미 존재하는 이메일입니다."),
 
+    // 시설 관련 응답
+    FACILITY_NOT_FOUND(HttpStatus.NOT_FOUND,"FACILITY404","존재하지 않는 시설입니다."),
+
     //노드 관련 응답
     NODE_NOT_FOUND(HttpStatus.NOT_FOUND,"NODE404","존재하지 않는 노드입니다."),
 

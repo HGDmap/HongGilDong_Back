@@ -42,6 +42,8 @@ public class Facility extends BaseEntity {
 
     private String phone;
 
+    private String link;
+
     private String openInfo;
 
     private String mainImg;

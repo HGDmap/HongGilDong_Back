@@ -1,5 +1,6 @@
 package hongik.map.honggildong.domain.facility.controller;
 
+import hongik.map.honggildong.domain.bookmarkFolder.repository.BookmarkFolderRepository;
 import hongik.map.honggildong.domain.facility.converter.FacilityConverter;
 import hongik.map.honggildong.domain.facility.dto.FacilityResponseDTO;
 import hongik.map.honggildong.domain.facility.entity.Facility;
@@ -19,6 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/facility")
 @Tag(name = "시설")
@@ -27,6 +31,7 @@ public class FacilityController {
 
     private final ReviewService reviewServiceImpl;
     private final FacilityService facilityServiceImpl;
+    private final BookmarkFolderRepository bookmarkFolderRepository;
 
     //특정 시설의 전체 리뷰 조회
     @GetMapping("/{facilityId}/reviews")
@@ -45,13 +50,21 @@ public class FacilityController {
     }
 
     //특정 시설의 상세 정보 조회
-    @GetMapping("/{facilityId}")
+    @GetMapping("/{facilityId}/details")
     @Operation(summary = "특정 시설의 상세 정보 조회")
     public ApiResponse<FacilityResponseDTO.Detail> getFacilityDetail(@PathVariable("facilityId") Long facilityId,
                                                                      @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         Facility facility = facilityServiceImpl.getFacilityById(facilityId);
-        FacilityResponseDTO.Detail body = FacilityConverter.toDetailDTO(facility);
+        Boolean isBookmarked = false;
+        if(userDetails!=null){
+            //윤정 bookmark repository완성ㄹ하면 변경
+            //isBookmarked = bookmarkRepository.findByMemberIdAndFacilityId(userDetails.getMember().getId(), facilityId);
+        }
+        //s3 추가 시 적용
+        List<String> photoList = new ArrayList<>();
+                //s3Service.getFacilityPhotoTop3(facilityId);
+        FacilityResponseDTO.Detail body = FacilityConverter.toDetailDTO(facility, isBookmarked, photoList);
 
         return ApiResponse.onSuccess(body);
     }
@@ -66,14 +79,6 @@ public class FacilityController {
         //PresignedUrl으로 저장 시 이미지 키 값을 시설i d로 구분하여 지정할 것
 
         return ApiResponse.onSuccess("Page<ImageDTO>");
-    }
-
-    //특정 시설 북마크 추가
-    @PostMapping("/{facilityId}/bookmark")
-    public ApiResponse<String> getFacilityReviews(@PathVariable("facilityId") Long facilityId) {
-        Facility facility = facilityServiceImpl.getFacilityById(facilityId);
-        //윤정 북마크 서비스 구현 후.createBookMark()
-        return ApiResponse.onSuccess("나중에 bookmark status dto 추가");
     }
 
 }
