@@ -32,7 +32,10 @@ public enum ErrorStatus implements BaseCode {
     BOOKMARK_FOLDER_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOKMARK404", "즐겨찾기 폴더가 존재하지 않습니다."),
 
     // 즐겨찾기 폴더 에러 응답
-    FACILITY_NOT_FOUND(HttpStatus.NOT_FOUND, "FACILITY404", "시설이 존재하지 않습니다.");
+    FACILITY_NOT_FOUND(HttpStatus.NOT_FOUND, "FACILITY404", "시설이 존재하지 않습니다."),
+
+    // 즐겨찾기 시설 에러 응답
+    BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOKMARK404", "해당 시설의 즐겨찾기가 존재하지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

@@ -1,5 +1,8 @@
 package hongik.map.honggildong.domain.bookmarkFolder.service;
 
+import hongik.map.honggildong.domain.bookmark.dto.BookmarkResponseDTO;
+import hongik.map.honggildong.domain.bookmark.entity.Bookmark;
+import hongik.map.honggildong.domain.bookmark.repository.BookmarkRepository;
 import hongik.map.honggildong.domain.bookmarkFolder.dto.BookmarkFolderRequestDTO;
 import hongik.map.honggildong.domain.bookmarkFolder.dto.BookmarkFolderResponseDTO;
 import hongik.map.honggildong.domain.bookmarkFolder.entity.BookmarkFolder;
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -29,10 +33,11 @@ public class BookmarkFolderServiceImpl implements BookmarkFolderService {
     private final BookmarkFolderRepository bookmarkFolderRepository;
     private final MemberRepository memberRepository;
     private final FacilityRepository facilityRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     @Override
-    public BookmarkFolderResponseDTO.Single createBookmarkFolder(CustomUserDetails userDetails,
-                                                                 BookmarkFolderRequestDTO.Create createFolderRequestDTO) {
+    public BookmarkResponseDTO.All createBookmarkFolder(CustomUserDetails userDetails,
+                                                           BookmarkFolderRequestDTO.Create createFolderRequestDTO) {
         Member member = userDetails.getMember();
         
         BookmarkFolder bookmarkFolder = BookmarkFolder.builder()
@@ -42,42 +47,25 @@ public class BookmarkFolderServiceImpl implements BookmarkFolderService {
                 .build();
 
         bookmarkFolderRepository.save(bookmarkFolder);
-        return new BookmarkFolderResponseDTO.Single(
-                bookmarkFolder.getId(),
-                bookmarkFolder.getName(),
-                bookmarkFolder.getColor(),
-                Collections.emptyList() // 처음엔 비어 있음
-        );
+        List<BookmarkFolder> bookmarkFolders = bookmarkFolderRepository.findAllByMember(member).stream().toList();
+
+        return new BookmarkResponseDTO.All(getBookmarkFolderlist(bookmarkFolders));
     }
 
     @Override
-    public BookmarkFolderResponseDTO.Single updateBookmarkFolder(Long folderId,
-                                                                 CustomUserDetails userDetails,
-                                                                 BookmarkFolderRequestDTO.Update updateFolderRequestDTO) {
+    public BookmarkResponseDTO.All updateBookmarkFolder(Long folderId,
+                                                           CustomUserDetails userDetails,
+                                                           BookmarkFolderRequestDTO.Update updateFolderRequestDTO) {
         Member member = userDetails.getMember();
 
-        BookmarkFolder bookmarkFolder = bookmarkFolderRepository.findById(folderId)
+        BookmarkFolder bookmarkFolder = bookmarkFolderRepository.findByIdAndMember(folderId, member)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKMARK_FOLDER_NOT_FOUND));
-
-        List<Facility> facilities = facilityRepository.findAllByBookmarkFolder(bookmarkFolder);
 
         bookmarkFolder.setName(updateFolderRequestDTO.getFolderName());
         bookmarkFolder.setColor(updateFolderRequestDTO.getFolderColor());
 
-        List<BookmarkFolderResponseDTO.BookmarkList> items = facilities.stream()
-                .map(f -> new BookmarkFolderResponseDTO.BookmarkList(
-                        f.getId(),
-                        f.getNode().getLatitude(),
-                        f.getNode().getLongitude()
-                ))
-                .toList();
-
-        return new BookmarkFolderResponseDTO.Single(
-                bookmarkFolder.getId(),
-                bookmarkFolder.getName(),
-                bookmarkFolder.getColor(),
-                items
-        );
+        List<BookmarkFolder> bookmarkFolders = bookmarkFolderRepository.findAllByMember(member).stream().toList();
+        return new BookmarkResponseDTO.All(getBookmarkFolderlist(bookmarkFolders));
     }
 
     @Transactional
@@ -87,73 +75,46 @@ public class BookmarkFolderServiceImpl implements BookmarkFolderService {
 
         BookmarkFolder folder = bookmarkFolderRepository.findById(folderId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKMARK_FOLDER_NOT_FOUND));
+        List<Bookmark> bookmarks = bookmarkRepository.findAllByBookmarkFolder(folder);
 
-        List<Facility> facilities = facilityRepository.findAllByBookmarkFolder(folder);
-        facilities.forEach(f -> f.setBookmarkFolder(null));
-
+        bookmarkRepository.deleteAll(bookmarks);
         bookmarkFolderRepository.delete(folder);
+
+        return;
     }
 
-    @Transactional
-    @Override
-    public void deleteBookmark(Long facilityId, CustomUserDetails userDetails) {
-        Member member = userDetails.getMember();
 
-        Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new GeneralException(ErrorStatus.FACILITY_NOT_FOUND));
 
-        facility.setBookmarkFolder(null);
-    }
+    private List<BookmarkResponseDTO.Detail> getBookmarklist(BookmarkFolder bookmarkFolder) {
 
-    @Override
-    public BookmarkFolderResponseDTO.Single addBookmark(CustomUserDetails userDetails,
-                                                         Long folderId,
-                                                         Long facilityId) {
-        Member member = userDetails.getMember();
-        BookmarkFolder bookmarkFolder = bookmarkFolderRepository.findById(folderId).orElseThrow(() -> new GeneralException(ErrorStatus.BOOKMARK_FOLDER_NOT_FOUND));
-        Facility facility = facilityRepository.findById(facilityId).orElseThrow(() -> new GeneralException(ErrorStatus.FACILITY_NOT_FOUND));
+        // 즐겨찾기 폴더가 비어있을 때
+        if (bookmarkFolder.getBookmarks() == null || bookmarkFolder.getBookmarks().isEmpty()) {
+            return Collections.emptyList();
+        }
 
-        facility.setBookmarkFolder(bookmarkFolder);
-        facilityRepository.save(facility);
-
-        List<Facility> facilities = facilityRepository.findAllByBookmarkFolder(bookmarkFolder);
-
-        List<BookmarkFolderResponseDTO.BookmarkList> items = facilities.stream()
-                .map(f -> new BookmarkFolderResponseDTO.BookmarkList(
-                        f.getId(),
-                        f.getNode().getLatitude(),
-                        f.getNode().getLongitude()
+        return bookmarkFolder.getBookmarks().stream()
+                .map(f -> new BookmarkResponseDTO.Detail(
+                        f.getFacility().getId(),
+                        f.getFacility().getName(),
+                        f.getFacility().getLocationDetail(),
+                        f.getFacility().getOpenInfo(),
+                        f.getFacility().getMainImg(),
+                        f.getFacility().getBuilding().getLatitude(),
+                        f.getFacility().getBuilding().getLongitude(),
+                        f.getFacility().getBuilding().getId()
                 ))
                 .toList();
-
-        return new BookmarkFolderResponseDTO.Single(
-                bookmarkFolder.getId(),
-                bookmarkFolder.getName(),
-                bookmarkFolder.getColor(),
-                items
-        );
     }
 
-    @Override
-    public BookmarkFolderResponseDTO.Single getBookmarks(Long folderId,
-                                                         UserDetails userDetails) {
-        Member member = userDetails.getMember();
-        BookmarkFolder bookmarkFolder = bookmarkFolderRepository.findById(folderId).orElseThrow(() -> new GeneralException(ErrorStatus.BOOKMARK_FOLDER_NOT_FOUND));
+    private List<BookmarkResponseDTO.Single> getBookmarkFolderlist(List<BookmarkFolder> bookmarkFolders) {
 
-        List<Facility> facilities = facilityRepository.findAllByBookmarkFolder(bookmarkFolder);
-
-        List<BookmarkFolderResponseDTO.BookmarkList> items = facilities.stream()
-                .map(f -> new BookmarkFolderResponseDTO.BookmarkList(
+       return bookmarkFolders.stream()
+                .map(f -> new BookmarkResponseDTO.Single(
                         f.getId(),
-                        f.getNode().getLatitude(),
-                        f.getNode().getLongitude()
+                        f.getName(),
+                        f.getColor(),
+                        getBookmarklist(f)
                 ))
                 .toList();
-
-        return new BookmarkFolderResponseDTO.Single(
-                bookmarkFolder.getId(),
-                bookmarkFolder.getName(),
-                bookmarkFolder.getColor(),
-                items
-        );
     }
 }
