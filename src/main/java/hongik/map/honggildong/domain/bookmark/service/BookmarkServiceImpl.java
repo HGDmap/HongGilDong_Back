@@ -50,20 +50,31 @@ public class BookmarkServiceImpl implements BookmarkService {
             preBookmarkFolder.getBookmarks().remove(preBookmark.get());
             bookmarkRepository.deleteById(preBookmark.get().getId());
 
+            Bookmark bookmark = Bookmark.builder()
+                    .bookmarkFolder(bookmarkFolder)
+                    .facility(facility)
+                    .member(member)
+                    .building(facility.getBuilding())
+                    .build();
+
+            bookmarkRepository.save(bookmark);
+            bookmarkFolder.getBookmarks().add(bookmark);
+            bookmarkRepository.save(bookmark);
+
             bookmarkFolder = preBookmarkFolder;
+        } else {
+            // 즐겨찾기 새롭게 추가
+            Bookmark bookmark = Bookmark.builder()
+                    .bookmarkFolder(bookmarkFolder)
+                    .facility(facility)
+                    .member(member)
+                    .building(facility.getBuilding())
+                    .build();
+
+            bookmarkRepository.save(bookmark);
+            bookmarkFolder.getBookmarks().add(bookmark);
+            bookmarkRepository.save(bookmark);
         }
-
-        // 즐겨찾기 새롭게 추가
-        Bookmark bookmark = Bookmark.builder()
-                .bookmarkFolder(bookmarkFolder)
-                .facility(facility)
-                .member(member)
-                .building(facility.getBuilding())
-                .build();
-
-        bookmarkRepository.save(bookmark);
-        bookmarkFolder.getBookmarks().add(bookmark);
-        bookmarkRepository.save(bookmark);
 
         return new BookmarkResponseDTO.Single(
                 bookmarkFolder.getId(),

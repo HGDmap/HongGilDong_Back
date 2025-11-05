@@ -31,11 +31,11 @@ public class BookmarkFolderController {
 
     // 즐겨찾기 폴더 삭제
     @DeleteMapping("/{folderId}")
-    public ApiResponse<?> deleteFolder(@PathVariable Long folderId,
+    public ApiResponse<BookmarkResponseDTO.All> deleteFolder(@PathVariable Long folderId,
                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        bookmarkFolderService.deleteBookmarkFolder(folderId, userDetails);
-        return ApiResponse.onSuccess("해당 즐겨찾기 폴더가 삭제되었습니다.");
+        BookmarkResponseDTO.All body = bookmarkFolderService.deleteBookmarkFolder(folderId, userDetails);
+        return ApiResponse.onSuccess(body);
     }
 
 

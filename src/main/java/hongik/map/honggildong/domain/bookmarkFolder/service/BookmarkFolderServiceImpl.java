@@ -54,8 +54,8 @@ public class BookmarkFolderServiceImpl implements BookmarkFolderService {
 
     @Override
     public BookmarkResponseDTO.All updateBookmarkFolder(Long folderId,
-                                                           CustomUserDetails userDetails,
-                                                           BookmarkFolderRequestDTO.Update updateFolderRequestDTO) {
+                                                        CustomUserDetails userDetails,
+                                                        BookmarkFolderRequestDTO.Update updateFolderRequestDTO) {
         Member member = userDetails.getMember();
 
         BookmarkFolder bookmarkFolder = bookmarkFolderRepository.findByIdAndMember(folderId, member)
@@ -70,7 +70,7 @@ public class BookmarkFolderServiceImpl implements BookmarkFolderService {
 
     @Transactional
     @Override
-    public void deleteBookmarkFolder(Long folderId, CustomUserDetails userDetails) {
+    public BookmarkResponseDTO.All deleteBookmarkFolder(Long folderId, CustomUserDetails userDetails) {
         Member member = userDetails.getMember();
 
         BookmarkFolder folder = bookmarkFolderRepository.findById(folderId)
@@ -80,7 +80,8 @@ public class BookmarkFolderServiceImpl implements BookmarkFolderService {
         bookmarkRepository.deleteAll(bookmarks);
         bookmarkFolderRepository.delete(folder);
 
-        return;
+        List<BookmarkFolder> bookmarkFolders = bookmarkFolderRepository.findAllByMember(member).stream().toList();
+        return new BookmarkResponseDTO.All(getBookmarkFolderlist(bookmarkFolders));
     }
 
 
