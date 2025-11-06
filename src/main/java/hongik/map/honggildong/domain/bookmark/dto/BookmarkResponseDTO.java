@@ -2,6 +2,8 @@ package hongik.map.honggildong.domain.bookmark.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import hongik.map.honggildong.domain.bookmarkFolder.dto.BookmarkFolderResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,9 +40,29 @@ public class BookmarkResponseDTO {
         private List<BookmarkResponseDTO.Single> bookmarkFolderList;
     }
 
+    // 다형성 적용
+    // type이 building이면 BuildingDetail로, facility면 FacilityDetail로 가져옴
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+    @JsonSubTypes({
+            @JsonSubTypes.Type(value = BuildingDetail.class, name = "BUILDING"),
+            @JsonSubTypes.Type(value = FacilityDetail.class, name = "FACILITY")
+    })
+    public interface Detail { }
+
+
+    // 빌딩 세부 정보
+    @Builder @Getter @NoArgsConstructor @AllArgsConstructor
+    public static class BuildingDetail implements Detail{
+        private Long buildingId;
+        private String buildingName;
+        private String buildingImage;
+        private Double latitude;
+        private Double longitude;
+    }
+
     // 시설 세부 정보
     @Builder @Getter @NoArgsConstructor @AllArgsConstructor
-    public static class Detail {
+    public static class FacilityDetail implements Detail{
         private Long facilityId;
         private String facilityName;
         private String facilityLocation;
@@ -51,7 +73,6 @@ public class BookmarkResponseDTO {
         private String facilityImage;
         private Double latitude;
         private Double longitude;
-
         private Long buildingId;
 
         //TODO: 시설 open info 처리

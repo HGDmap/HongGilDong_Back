@@ -2,11 +2,13 @@ package hongik.map.honggildong.domain.bookmarkFolder.service;
 
 import hongik.map.honggildong.domain.bookmark.dto.BookmarkResponseDTO;
 import hongik.map.honggildong.domain.bookmark.entity.Bookmark;
+import hongik.map.honggildong.domain.bookmark.entity.BookmarkType;
 import hongik.map.honggildong.domain.bookmark.repository.BookmarkRepository;
 import hongik.map.honggildong.domain.bookmarkFolder.dto.BookmarkFolderRequestDTO;
 import hongik.map.honggildong.domain.bookmarkFolder.dto.BookmarkFolderResponseDTO;
 import hongik.map.honggildong.domain.bookmarkFolder.entity.BookmarkFolder;
 import hongik.map.honggildong.domain.bookmarkFolder.repository.BookmarkFolderRepository;
+import hongik.map.honggildong.domain.building.entity.Building;
 import hongik.map.honggildong.domain.direction.dto.DirectionResponseDTO;
 import hongik.map.honggildong.domain.facility.entity.Facility;
 import hongik.map.honggildong.domain.facility.repository.FacilityRepository;
@@ -28,6 +30,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BookmarkFolderServiceImpl implements BookmarkFolderService {
 
     private final BookmarkFolderRepository bookmarkFolderRepository;
@@ -53,6 +56,21 @@ public class BookmarkFolderServiceImpl implements BookmarkFolderService {
     }
 
     @Override
+    public BookmarkResponseDTO.Single singleBookmarkFolder(Long folderId, CustomUserDetails userDetails) {
+        Member member = userDetails.getMember();
+
+        BookmarkFolder folder = bookmarkFolderRepository.findById(folderId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKMARK_FOLDER_NOT_FOUND));
+        List<Bookmark> bookmarks = bookmarkRepository.findAllByBookmarkFolder(folder);
+
+        return new BookmarkResponseDTO.Single(
+                folder.getId(),
+                folder.getName(),
+                folder.getColor(),
+                getBookmarklist(folder));
+    }
+
+    @Override
     public BookmarkResponseDTO.All updateBookmarkFolder(Long folderId,
                                                         CustomUserDetails userDetails,
                                                         BookmarkFolderRequestDTO.Update updateFolderRequestDTO) {
@@ -68,7 +86,6 @@ public class BookmarkFolderServiceImpl implements BookmarkFolderService {
         return new BookmarkResponseDTO.All(getBookmarkFolderlist(bookmarkFolders));
     }
 
-    @Transactional
     @Override
     public BookmarkResponseDTO.All deleteBookmarkFolder(Long folderId, CustomUserDetails userDetails) {
         Member member = userDetails.getMember();
@@ -86,24 +103,45 @@ public class BookmarkFolderServiceImpl implements BookmarkFolderService {
 
 
 
+    // 즐겨찾기 목록 dto 구현 부분
     private List<BookmarkResponseDTO.Detail> getBookmarklist(BookmarkFolder bookmarkFolder) {
+        List<Bookmark> bookmarks = bookmarkFolder.getBookmarks();
 
-        // 즐겨찾기 폴더가 비어있을 때
-        if (bookmarkFolder.getBookmarks() == null || bookmarkFolder.getBookmarks().isEmpty()) {
+        if (bookmarks == null || bookmarks.isEmpty()) {
             return Collections.emptyList();
         }
 
-        return bookmarkFolder.getBookmarks().stream()
-                .map(f -> new BookmarkResponseDTO.Detail(
-                        f.getFacility().getId(),
-                        f.getFacility().getName(),
-                        f.getFacility().getLocationDetail(),
-                        f.getFacility().getOpenInfo(),
-                        f.getFacility().getMainImg(),
-                        f.getFacility().getBuilding().getLatitude(),
-                        f.getFacility().getBuilding().getLongitude(),
-                        f.getFacility().getBuilding().getId()
-                ))
+        return bookmarks.stream()
+                .map(bm -> {
+                    if (bm.getType() == BookmarkType.FACILITY) {
+                        Facility fac = bm.getFacility();
+                        Building b = fac.getBuilding();
+                        return BookmarkResponseDTO.FacilityDetail.builder()
+                                .facilityId(fac.getId())
+                                .facilityName(fac.getName())
+                                .facilityLocation(fac.getLocationDetail())
+                                .openInfo(fac.getOpenInfo())
+                                .facilityImage(fac.getMainImg())
+                                .latitude(b.getLatitude())
+                                .longitude(b.getLongitude())
+                                .buildingId(b.getId())
+                                .build();
+                    }
+
+                    if (bm.getType() == BookmarkType.BUILDING) {
+                        Building b = bm.getBuilding();
+                        return BookmarkResponseDTO.BuildingDetail.builder()
+                                .buildingId(b.getId())
+                                .buildingName(b.getName())
+                                .buildingImage(b.getMainImg())
+                                .latitude(b.getLatitude())
+                                .longitude(b.getLongitude())
+                                .build();
+                    }
+
+                    throw new GeneralException(ErrorStatus.BOOKMARK_NOT_FOUND);
+                })
+                .map(BookmarkResponseDTO.Detail.class::cast)
                 .toList();
     }
 

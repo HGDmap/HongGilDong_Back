@@ -2,10 +2,13 @@ package hongik.map.honggildong.domain.bookmark.service;
 
 import hongik.map.honggildong.domain.bookmark.dto.BookmarkResponseDTO;
 import hongik.map.honggildong.domain.bookmark.entity.Bookmark;
+import hongik.map.honggildong.domain.bookmark.entity.BookmarkType;
 import hongik.map.honggildong.domain.bookmark.repository.BookmarkRepository;
 import hongik.map.honggildong.domain.bookmarkFolder.dto.BookmarkFolderResponseDTO;
 import hongik.map.honggildong.domain.bookmarkFolder.entity.BookmarkFolder;
 import hongik.map.honggildong.domain.bookmarkFolder.repository.BookmarkFolderRepository;
+import hongik.map.honggildong.domain.building.entity.Building;
+import hongik.map.honggildong.domain.building.repository.BuildingRepository;
 import hongik.map.honggildong.domain.facility.entity.Facility;
 import hongik.map.honggildong.domain.facility.repository.FacilityRepository;
 import hongik.map.honggildong.domain.member.entity.Member;
@@ -28,75 +31,95 @@ public class BookmarkServiceImpl implements BookmarkService {
     private final BookmarkFolderRepository bookmarkFolderRepository;
     private final FacilityRepository facilityRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final BuildingRepository buildingRepository;
 
     // 즐겨찾기 수정 및 추가
     @Override
+    @Transactional
     public BookmarkResponseDTO.Single upsertBookmark(CustomUserDetails userDetails,
                                                      Long folderId,
-                                                     Long facilityId) {
+                                                     Long targetId,
+                                                     BookmarkType type) {
 
         Member member = userDetails.getMember();
         BookmarkFolder bookmarkFolder = bookmarkFolderRepository.findByIdAndMember(folderId, member)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKMARK_FOLDER_NOT_FOUND));
-        Facility facility = facilityRepository.findById(facilityId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.FACILITY_NOT_FOUND));
 
-        Optional<Bookmark> preBookmark = bookmarkRepository.findByFacilityAndMember(facility, member);
+        if (type == BookmarkType.FACILITY) {
+            Facility facility = facilityRepository.findById(targetId)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.FACILITY_NOT_FOUND));
+            Optional<Bookmark> preBookmark = bookmarkRepository.findByFacilityAndMember(facility, member);
 
-        // 존재하면 수정, 존재하지 않으면 새롭게 추가
-        if (preBookmark.isPresent()) {
-            BookmarkFolder preBookmarkFolder = preBookmark.get().getBookmarkFolder();
+            if (preBookmark.isPresent()) {
+                bookmarkFolder = moveFolder(preBookmark.get(), bookmarkFolder);
+            } else {
+                Bookmark bookmark = Bookmark.builder()
+                                    .bookmarkFolder(bookmarkFolder)
+                                    .member(member)
+                                    .facility(facility)
+                                    .building(null)
+                                    .type(BookmarkType.FACILITY)
+                                    .build();
 
-            preBookmarkFolder.getBookmarks().remove(preBookmark.get());
-            bookmarkRepository.deleteById(preBookmark.get().getId());
+                bookmarkRepository.save(bookmark);
+                bookmarkFolder.getBookmarks().add(bookmark);
+            }
+        }
 
-            Bookmark bookmark = Bookmark.builder()
-                    .bookmarkFolder(bookmarkFolder)
-                    .facility(facility)
-                    .member(member)
-                    .building(facility.getBuilding())
-                    .build();
+        if (type == BookmarkType.BUILDING) {
+            Building building = buildingRepository.findById(targetId)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.BUILDING_NOT_FOUND));
+            Optional<Bookmark> preBookmark = bookmarkRepository.findByBuildingAndMember(building, member);
 
-            bookmarkRepository.save(bookmark);
-            bookmarkFolder.getBookmarks().add(bookmark);
-            bookmarkRepository.save(bookmark);
+            if (preBookmark.isPresent()) {
+                bookmarkFolder = moveFolder(preBookmark.get(), bookmarkFolder);
+            } else {
+                Bookmark bookmark = Bookmark.builder()
+                        .bookmarkFolder(bookmarkFolder)
+                        .member(member)
+                        .facility(null)
+                        .building(building)
+                        .type(BookmarkType.BUILDING)
+                        .build();
 
-            bookmarkFolder = preBookmarkFolder;
-        } else {
-            // 즐겨찾기 새롭게 추가
-            Bookmark bookmark = Bookmark.builder()
-                    .bookmarkFolder(bookmarkFolder)
-                    .facility(facility)
-                    .member(member)
-                    .building(facility.getBuilding())
-                    .build();
-
-            bookmarkRepository.save(bookmark);
-            bookmarkFolder.getBookmarks().add(bookmark);
-            bookmarkRepository.save(bookmark);
+                bookmarkRepository.save(bookmark);
+                bookmarkFolder.getBookmarks().add(bookmark);
+            }
         }
 
         return new BookmarkResponseDTO.Single(
-                bookmarkFolder.getId(),
-                bookmarkFolder.getName(),
-                bookmarkFolder.getColor(),
-                getBookmarklist(bookmarkFolder));
+                    bookmarkFolder.getId(),
+                    bookmarkFolder.getName(),
+                    bookmarkFolder.getColor(),
+                    getBookmarklist(bookmarkFolder));
     }
 
     @Override
     @Transactional
     public BookmarkResponseDTO.Single deleteBookmark(CustomUserDetails userDetails,
-                                                     Long facilityId) {
+                                                     Long targetId,
+                                                     BookmarkType bookmarkType) {
 
         Member member = userDetails.getMember();
-        Facility facility = facilityRepository.findById(facilityId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.FACILITY_NOT_FOUND));
 
-        Bookmark bookmark = bookmarkRepository.findByFacilityAndMember(facility, member)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKMARK_NOT_FOUND));
+        Bookmark bookmark = null;
+
+        if (bookmarkType == BookmarkType.FACILITY) {
+            Facility facility = facilityRepository.findById(targetId)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.FACILITY_NOT_FOUND));
+
+            bookmark = bookmarkRepository.findByFacilityAndMember(facility, member)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKMARK_NOT_FOUND));
+
+        } else if (bookmarkType == BookmarkType.BUILDING) {
+            Building building = buildingRepository.findById(targetId)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.BUILDING_NOT_FOUND));
+
+            bookmark = bookmarkRepository.findByBuildingAndMember(building, member)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.BOOKMARK_NOT_FOUND));
+        }
 
         BookmarkFolder bookmarkFolder = bookmark.getBookmarkFolder();
-
         bookmarkFolder.getBookmarks().remove(bookmark);
         bookmarkRepository.deleteById(bookmark.getId());
 
@@ -126,26 +149,61 @@ public class BookmarkServiceImpl implements BookmarkService {
     }
 
 
-    private List<BookmarkResponseDTO.Detail> getBookmarklist(BookmarkFolder bookmarkFolder) {
+    // 즐겨찾기 수정시 즐겨찾기 폴더 이동
+    private BookmarkFolder moveFolder(Bookmark bookmark, BookmarkFolder targetFolder) {
+        BookmarkFolder prev = bookmark.getBookmarkFolder();
 
-        // 즐겨찾기 폴더가 비어있을 때
-        if (bookmarkFolder.getBookmarks() == null || bookmarkFolder.getBookmarks().isEmpty()) {
+        if (!prev.getId().equals(targetFolder.getId())) {
+            bookmark.setBookmarkFolder(targetFolder);
+            prev.getBookmarks().remove(bookmark);
+
+            targetFolder.getBookmarks().add(bookmark);
+        }
+
+        return prev;
+    }
+
+
+    // 즐겨찾기 목록 dto 구현 부분
+    private List<BookmarkResponseDTO.Detail> getBookmarklist(BookmarkFolder bookmarkFolder) {
+        List<Bookmark> bookmarks = bookmarkFolder.getBookmarks();
+
+        if (bookmarks == null || bookmarks.isEmpty()) {
             return Collections.emptyList();
         }
 
-        return bookmarkFolder.getBookmarks().stream()
-                .map(f -> new BookmarkResponseDTO.Detail(
-                        f.getFacility().getId(),
-                        f.getFacility().getName(),
-                        f.getFacility().getLocationDetail(),
-                        f.getFacility().getOpenInfo(),
-                        f.getFacility().getMainImg(),
-                        f.getFacility().getBuilding().getLatitude(),
-                        f.getFacility().getBuilding().getLongitude(),
-                        f.getFacility().getBuilding().getId()
-                ))
+        return bookmarks.stream()
+                .map(bm -> {
+                    if (bm.getType() == BookmarkType.FACILITY) {
+                        Facility fac = bm.getFacility();
+                        Building b = fac.getBuilding();
+                        return BookmarkResponseDTO.FacilityDetail.builder()
+                                .facilityId(fac.getId())
+                                .facilityName(fac.getName())
+                                .facilityLocation(fac.getLocationDetail())
+                                .openInfo(fac.getOpenInfo())
+                                .facilityImage(fac.getMainImg())
+                                .latitude(b.getLatitude())
+                                .longitude(b.getLongitude())
+                                .buildingId(b.getId())
+                                .build();
+                    }
+
+                    if (bm.getType() == BookmarkType.BUILDING) {
+                        Building b = bm.getBuilding();
+                        return BookmarkResponseDTO.BuildingDetail.builder()
+                                .buildingId(b.getId())
+                                .buildingName(b.getName())
+                                .buildingImage(b.getMainImg())
+                                .latitude(b.getLatitude())
+                                .longitude(b.getLongitude())
+                                .build();
+                    }
+
+                    throw new GeneralException(ErrorStatus.BOOKMARK_NOT_FOUND);
+                })
+                .map(BookmarkResponseDTO.Detail.class::cast)
                 .toList();
     }
-
 
 }

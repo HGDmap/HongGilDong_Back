@@ -3,6 +3,7 @@ package hongik.map.honggildong.domain.bookmark.repository;
 import hongik.map.honggildong.domain.bookmark.entity.Bookmark;
 import hongik.map.honggildong.domain.bookmark.dto.JPQLBookmarkDTO;
 import hongik.map.honggildong.domain.bookmarkFolder.entity.BookmarkFolder;
+import hongik.map.honggildong.domain.building.entity.Building;
 import hongik.map.honggildong.domain.facility.entity.Facility;
 import hongik.map.honggildong.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,4 +34,6 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     Optional<Bookmark> findByFacilityAndMember(Facility facility, Member member);
 
     List<Bookmark> findAllByBookmarkFolder(BookmarkFolder folder);
+
+    Optional<Bookmark> findByBuildingAndMember(Building building, Member member);
 }

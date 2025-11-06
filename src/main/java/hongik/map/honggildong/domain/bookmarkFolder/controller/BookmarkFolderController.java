@@ -29,6 +29,15 @@ public class BookmarkFolderController {
         return ApiResponse.onSuccess(body);
     }
 
+    // 단일 즐겨찾기 폴더 내 즐겨찾기 목록 조회
+    @GetMapping("/{folderId}")
+    public ApiResponse<BookmarkResponseDTO.Single> getBookmarkList(@PathVariable Long folderId,
+                                                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        BookmarkResponseDTO.Single body = bookmarkFolderService.singleBookmarkFolder(folderId, userDetails);
+        return ApiResponse.onSuccess(body);
+    }
+
     // 즐겨찾기 폴더 삭제
     @DeleteMapping("/{folderId}")
     public ApiResponse<BookmarkResponseDTO.All> deleteFolder(@PathVariable Long folderId,

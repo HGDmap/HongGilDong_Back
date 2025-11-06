@@ -2,6 +2,7 @@ package hongik.map.honggildong.domain.bookmark.controller;
 
 import hongik.map.honggildong.domain.bookmark.dto.BookmarkResponseDTO;
 import hongik.map.honggildong.domain.bookmark.entity.Bookmark;
+import hongik.map.honggildong.domain.bookmark.entity.BookmarkType;
 import hongik.map.honggildong.domain.bookmark.service.BookmarkService;
 import hongik.map.honggildong.domain.bookmarkFolder.dto.BookmarkFolderResponseDTO;
 import hongik.map.honggildong.global.apiPayload.ApiResponse;
@@ -23,25 +24,28 @@ public class BookmarkController {
     private final BookmarkService bookmarkService;
 
     // 즐겨찾기 추가 및 수정
-    @PostMapping
+    @PostMapping("/{type}")
     public ApiResponse<BookmarkResponseDTO.Single> addBookmark(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                               @PathVariable BookmarkType type,
                                                                @RequestParam Long folderId,
-                                                               @RequestParam Long facilityId) {
+                                                               @RequestParam Long targetId) {
 
-        BookmarkResponseDTO.Single body = bookmarkService.upsertBookmark(userDetails, folderId, facilityId);
+        BookmarkResponseDTO.Single body = bookmarkService.upsertBookmark(userDetails, folderId, targetId, type);
         return ApiResponse.onSuccess(body);
 
     }
 
     // 즐겨찾기 삭제
-    @DeleteMapping("/{facilityId}")
+    @DeleteMapping("/{type}")
     public ApiResponse<BookmarkResponseDTO.Single> deleteBookmark(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                                  @RequestParam Long facilityId) {
+                                                                  @PathVariable BookmarkType type,
+                                                                  @RequestParam Long targetId) {
 
-        BookmarkResponseDTO.Single body = bookmarkService.deleteBookmark(userDetails, facilityId);
+        BookmarkResponseDTO.Single body = bookmarkService.deleteBookmark(userDetails, targetId, type);
         return ApiResponse.onSuccess(body);
 
     }
+
 
     // 전체 즐겨찾기 조회
     @PostMapping("/all")

@@ -3,6 +3,7 @@ package hongik.map.honggildong.domain.bookmark.entity;
 import hongik.map.honggildong.domain.bookmarkFolder.entity.BookmarkFolder;
 import hongik.map.honggildong.domain.building.entity.Building;
 import hongik.map.honggildong.domain.facility.entity.Facility;
+import hongik.map.honggildong.domain.facility.entity.FacilityType;
 import hongik.map.honggildong.domain.member.entity.Member;
 import hongik.map.honggildong.global.common.BaseEntity;
 import jakarta.persistence.*;
@@ -19,6 +20,9 @@ public class Bookmark extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    private BookmarkType type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;

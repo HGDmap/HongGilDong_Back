@@ -16,5 +16,7 @@ public interface BookmarkFolderService {
                                                     BookmarkFolderRequestDTO.Update updateFolderRequestDTO);
 
     BookmarkResponseDTO.All deleteBookmarkFolder(Long folderId, CustomUserDetails userDetails);
+
+    BookmarkResponseDTO.Single singleBookmarkFolder(Long folderId, CustomUserDetails userDetails);
 }
 
