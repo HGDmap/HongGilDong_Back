@@ -53,27 +53,29 @@ public class BookmarkResponseDTO {
     // 빌딩 세부 정보
     @Builder @Getter @NoArgsConstructor @AllArgsConstructor
     public static class BuildingDetail implements Detail{
-        private Long buildingId;
-        private String buildingName;
-        private String buildingImage;
+        private Long id;
+        private String name;
+        private String location;
+        private String image;
         private Double latitude;
         private Double longitude;
+        private Long nodeId;
     }
 
     // 시설 세부 정보
     @Builder @Getter @NoArgsConstructor @AllArgsConstructor
     public static class FacilityDetail implements Detail{
-        private Long facilityId;
-        private String facilityName;
-        private String facilityLocation;
+        private Long id;
+        private String name;
+        private String location;
 
         @JsonIgnore
         private String openInfo;
 
-        private String facilityImage;
+        private String image;
         private Double latitude;
         private Double longitude;
-        private Long buildingId;
+        private Long nodeId;
 
         //TODO: 시설 open info 처리
 //        @JsonProperty("isFacilityOpen")

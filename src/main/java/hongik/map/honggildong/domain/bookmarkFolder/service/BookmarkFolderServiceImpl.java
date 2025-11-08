@@ -117,25 +117,26 @@ public class BookmarkFolderServiceImpl implements BookmarkFolderService {
                         Facility fac = bm.getFacility();
                         Building b = fac.getBuilding();
                         return BookmarkResponseDTO.FacilityDetail.builder()
-                                .facilityId(fac.getId())
-                                .facilityName(fac.getName())
-                                .facilityLocation(fac.getLocationDetail())
+                                .id(fac.getId())
+                                .name(fac.getName())
+                                .location(fac.getLocationDetail())
                                 .openInfo(fac.getOpenInfo())
-                                .facilityImage(fac.getMainImg())
+                                .image(fac.getMainImg())
                                 .latitude(b.getLatitude())
                                 .longitude(b.getLongitude())
-                                .buildingId(b.getId())
+                                .nodeId(fac.getNode().getId())
                                 .build();
                     }
 
                     if (bm.getType() == BookmarkType.BUILDING) {
                         Building b = bm.getBuilding();
                         return BookmarkResponseDTO.BuildingDetail.builder()
-                                .buildingId(b.getId())
-                                .buildingName(b.getName())
-                                .buildingImage(b.getMainImg())
+                                .id(b.getId())
+                                .name(b.getName())
+                                .image(b.getMainImg())
                                 .latitude(b.getLatitude())
                                 .longitude(b.getLongitude())
+                                .nodeId(b.getMainNode().getId())
                                 .build();
                     }
 
