@@ -13,6 +13,7 @@ public class FacilityResponseDTO {
     @AllArgsConstructor
     public static class Detail {
         private Long id;
+        private String type;
         private Long nodeId;
         private String nodeName;
         private String open;
