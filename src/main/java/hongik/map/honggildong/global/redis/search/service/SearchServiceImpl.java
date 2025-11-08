@@ -2,7 +2,8 @@ package hongik.map.honggildong.global.redis.search.service;
 
 import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import com.redis.lettucemod.search.SearchResults;
-import hongik.map.honggildong.domain.bookmarkFolder.dto.JPQLBookmarkDTO;
+import hongik.map.honggildong.domain.bookmark.dto.JPQLBookmarkDTO;
+import hongik.map.honggildong.domain.bookmark.repository.BookmarkRepository;
 import hongik.map.honggildong.domain.bookmarkFolder.repository.BookmarkFolderRepository;
 import hongik.map.honggildong.domain.facility.entity.Facility;
 import hongik.map.honggildong.domain.facility.repository.FacilityRepository;
@@ -24,8 +25,7 @@ import java.util.stream.Collectors;
 public class SearchServiceImpl implements SearchService{
 
     private final SearchRepository searchRepository;
-    private final BookmarkFolderRepository bookmarkFolderRepository;
-    private final ImageService imageService;
+    private final BookmarkRepository bookmarkRepository;
     private final RedisModulesCommands<String, String> commands;
     private final FacilityRepository facilityRepository;
 
@@ -84,7 +84,7 @@ public class SearchServiceImpl implements SearchService{
         //interface(native query 프로젝션)->set
         List<JPQLBookmarkDTO.SearchResult> bookmarkedList = new ArrayList<>();
         if(member!=null){
-            bookmarkedList = bookmarkFolderRepository.findAllBookmarksFromSearch(member.getId(), buildingIds, facilityIds);
+            bookmarkedList = bookmarkRepository.findAllBookmarksFromSearch(member.getId(), buildingIds, facilityIds);
         }
 
         Set<Pair<String, Long>> bookmarkedSet = new HashSet<>();

@@ -1,4 +1,4 @@
-package hongik.map.honggildong.domain.bookmarkFolder.dto;
+package hongik.map.honggildong.domain.bookmark.dto;
 
 public class JPQLBookmarkDTO {
 

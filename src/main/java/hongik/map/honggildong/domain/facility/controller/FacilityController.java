@@ -56,16 +56,7 @@ public class FacilityController {
     public ApiResponse<FacilityResponseDTO.Detail> getFacilityDetail(@PathVariable("facilityId") Long facilityId,
                                                                      @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        Facility facility = facilityService.getFacilityById(facilityId);
-        Boolean isBookmarked = false;
-        if(userDetails!=null){
-            //윤정 bookmark repository완성ㄹ하면 변경
-            //isBookmarked = bookmarkRepository.findByMemberIdAndFacilityId(userDetails.getMember().getId(), facilityId);
-        }
-        //s3 추가 시 적용
-        List<String> photoList = new ArrayList<>();
-                //s3Service.getFacilityPhotoTop3(facilityId);
-        FacilityResponseDTO.Detail body = FacilityConverter.toDetailDTO(facility, isBookmarked, photoList);
+        FacilityResponseDTO.Detail body = facilityService.getFacilityDetails(facilityId, userDetails);
 
         return ApiResponse.onSuccess(body);
     }

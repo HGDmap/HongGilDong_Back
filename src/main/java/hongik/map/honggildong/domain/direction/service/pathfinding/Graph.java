@@ -11,6 +11,12 @@ public class Graph {
     private final Map<Long, Node> nodes = new HashMap<>();
     private final Map<Long, List<Edge>> adj = new HashMap<>();
 
+    // 노드 엣지 초기화
+    public void clear() {
+        nodes.clear();
+        adj.clear();
+    }
+
     public void addNode(Node n) {
         nodes.put(n.getId(), n);
         adj.computeIfAbsent(n.getId(), k -> new ArrayList<>());

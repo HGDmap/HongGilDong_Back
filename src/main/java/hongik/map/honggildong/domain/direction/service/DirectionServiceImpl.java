@@ -42,4 +42,5 @@ public class DirectionServiceImpl implements DirectionService {
         int seconds = (int) (time % 60);
         return new DirectionResponseDTO(minute, seconds, pathNodes);
     }
+
 }
