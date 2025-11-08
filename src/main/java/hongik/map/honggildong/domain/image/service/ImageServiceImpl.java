@@ -64,13 +64,25 @@ public class ImageServiceImpl implements ImageService {
         for(String fileName : fileNames) {
             //fileName : "image.png", "image.jpg" ...
             String baseName = fileName.substring(0, fileName.lastIndexOf('.')); //image
+
+
             String extension = fileName.substring(fileName.lastIndexOf('.') + 1); // png
+            // MIME 타입 매핑
+            String mimeType = switch (extension.toLowerCase()) {
+                case "jpg", "jpe" -> "image/jpeg";
+                case "png" -> "image/png";
+                case "gif" -> "image/gif";
+                case "webp" -> "image/webp";
+                case "svg" -> "image/svg+xml";
+                default -> "application/octet-stream";
+            };
+
             // 현재 시각 + UUID 포함한 키 생성
             String timestamp = LocalDateTime.now().format(FORMATTER);
             String uniqueKey = timestamp + "_" + UUID.randomUUID() + "-" + baseName + "." + extension;
 
             //image/review/building/2/facility/3/user/13/랜덤숫자/image.png
-            String fullPath = "image/review/building/" + buildingId + "/facility/" + facilityId+ "/user/"+memberId+"/"+uniqueKey + "-" + baseName + "." + extension;
+            String fullPath = "image/review/building/" + buildingId + "/facility/" + facilityId+ "/user/"+memberId+"/"+uniqueKey;
 
             PutObjectRequest objectRequest = PutObjectRequest.builder()
                     .bucket(bucket)
@@ -120,7 +132,7 @@ public class ImageServiceImpl implements ImageService {
                     .toList();
 
             // 3. S3 객체 키를 실제 접근 가능한 URL로 변환
-            objects.forEach(obj->topNImages.add("https://" + bucket + ".s3.amazonaws.com/" + obj.key()));
+            objects.forEach(obj->topNImages.add("https://" + bucket + ".s3." + region + ".amazonaws.com/" + obj.key()));
         }
 
         return topNImages;
@@ -131,27 +143,31 @@ public class ImageServiceImpl implements ImageService {
 
         String prefix = "image/review/building/" + facility.getBuilding().getId() + "/facility/" + facility.getId() + "/";
 
+        try {
 
-        ListObjectsV2Request request =ListObjectsV2Request.builder()
-                .bucket(bucket)
-                .prefix(prefix)
-                .maxKeys(pageSize)
-                .continuationToken(continuationToken)
-                .build();
+            ListObjectsV2Request request = ListObjectsV2Request.builder()
+                    .bucket(bucket)
+                    .prefix(prefix)
+                    .maxKeys(pageSize)
+                    .continuationToken(continuationToken)
+                    .build();
 
-        ListObjectsV2Response response = s3Client.listObjectsV2(request);
+            ListObjectsV2Response response = s3Client.listObjectsV2(request);
 
-        List<String> urls = response.contents().stream()
-                .map(S3Object::key) // 객체 키 가져오기
-                .map(key -> "https://" + bucket + ".s3.amazonaws.com/" + key) // URL 변환
-                .collect(Collectors.toList());
+            List<String> urls = response.contents().stream()
+                    .map(S3Object::key) // 객체 키 가져오기
+                    .map(key -> "https://" + bucket + ".s3." + region + ".amazonaws.com/" + key) // URL 변환
+                    .collect(Collectors.toList());
 
-        return ImageResponseDTO.ImagePage.builder()
-                .imageList(urls)
-                .continuationToken(response.nextContinuationToken())
-                .isFirst(continuationToken == null)
-                .isLast(!response.isTruncated())
-                .pageSize(pageSize)
-                .build();
+            return ImageResponseDTO.ImagePage.builder()
+                    .imageList(urls)
+                    .continuationToken(response.nextContinuationToken())
+                    .isFirst(continuationToken == null)
+                    .isLast(!response.isTruncated())
+                    .pageSize(pageSize)
+                    .build();
+        } catch (Exception e) {
+            throw new GeneralException(ErrorStatus.S3_ERROR);
+        }
     }
 }
