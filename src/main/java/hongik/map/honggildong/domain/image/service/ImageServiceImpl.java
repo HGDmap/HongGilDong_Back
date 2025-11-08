@@ -91,10 +91,39 @@ public class ImageServiceImpl implements ImageService {
         return urls;
     }
 
+    /**
+     * for문 돌면서 하기에 네트워크 낭비가 심한것같아서 일단 사용안하는걸로 함
+     * 혹시 나중에 사용할 일 있을까봐 일단 남겨둠
+     */
     @Override
     public List<String> getTopNImageOfFacility(Facility facility, Integer size) {
+        List<String> topNImages = new ArrayList<>();
 
-        return List.of();
+        Long buildingId = facility.getBuilding().getId();
+        Long facilityId = facility.getId();
+
+        String prefix = "image/review/building/" + buildingId + "/facility/" + facilityId + "/";
+
+        if(size >0){
+            ListObjectsV2Request request = ListObjectsV2Request.builder()
+                    .bucket(bucket)
+                    .prefix(prefix)
+                    .maxKeys(size)
+                    .build();
+            ListObjectsV2Response response = s3Client.listObjectsV2(request);
+
+            if (response.contents() == null || response.contents().isEmpty()) return topNImages;
+
+            // 2. 조회된 객체에서 최근(LastModified 기준) 순으로 정렬 후 limit개 추출
+            List<S3Object> objects = response.contents().stream()
+                    .sorted(Comparator.comparing(S3Object::lastModified).reversed())
+                    .toList();
+
+            // 3. S3 객체 키를 실제 접근 가능한 URL로 변환
+            objects.forEach(obj->topNImages.add("https://" + bucket + ".s3.amazonaws.com/" + obj.key()));
+        }
+
+        return topNImages;
     }
 
     @Override
