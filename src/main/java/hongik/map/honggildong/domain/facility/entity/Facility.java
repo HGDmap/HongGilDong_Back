@@ -5,6 +5,7 @@ import hongik.map.honggildong.domain.bookmarkFolder.entity.BookmarkFolder;
 import hongik.map.honggildong.domain.building.entity.Building;
 import hongik.map.honggildong.domain.node.entity.Node;
 import hongik.map.honggildong.global.common.BaseEntity;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,19 +37,26 @@ public class Facility extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private FacilityType type;
     @Enumerated(EnumType.STRING)
+    @Nullable
     private HashTag hashTag;
     //건물 내 층수
     @Enumerated(EnumType.STRING)
     private Floor floor;
 
+    @Nullable
     private String phone;
 
+    @Nullable
     private String link;
 
+    @Nullable
     private String openInfo;
 
+    @Nullable
     private String mainImg;
+    @Nullable
     private String mainImg2;
+    @Nullable
     private String mainImg3;
 
 }
