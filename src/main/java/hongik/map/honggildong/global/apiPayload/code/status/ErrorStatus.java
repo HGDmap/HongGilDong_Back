@@ -18,13 +18,27 @@ public enum ErrorStatus implements BaseCode {
     
     // 멤버 관련 응답
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT,"MEMBER409","이미 존재하는 이메일입니다."),
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND,"MEMBER404","존재하지 않는 사용자입니다."),
+
 
     //노드 관련 응답
     NODE_NOT_FOUND(HttpStatus.NOT_FOUND,"NODE404","존재하지 않는 노드입니다."),
 
     // 길찾기 에러 응답
     PATH_NOT_FOUND(HttpStatus.NOT_FOUND, "ROUTE40401", "출발지에서 목적지까지의 경로가 존재하지 않습니다."),
-    INVALID_NODE_ID(HttpStatus.BAD_REQUEST, "GRAPH40001", "노드 ID 형식이 올바르지 않습니다.");
+    INVALID_NODE_ID(HttpStatus.BAD_REQUEST, "GRAPH40001", "노드 ID 형식이 올바르지 않습니다."),
+
+    // 즐겨찾기 폴더 에러 응답
+    BOOKMARK_FOLDER_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOKMARK404", "즐겨찾기 폴더가 존재하지 않습니다."),
+
+    // 즐겨찾기 폴더 에러 응답
+    FACILITY_NOT_FOUND(HttpStatus.NOT_FOUND, "FACILITY404", "시설이 존재하지 않습니다."),
+
+    // 즐겨찾기 시설 에러 응답
+    BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOKMARK404", "해당 시설의 즐겨찾기가 존재하지 않습니다."),
+
+    // 빌딩 관련 에러 응답
+    BUILDING_NOT_FOUND(HttpStatus.NOT_FOUND, "BUILDING404", "건물이 존재하지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

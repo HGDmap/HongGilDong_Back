@@ -8,6 +8,8 @@ import hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus;
 import hongik.map.honggildong.global.apiPayload.exception.GeneralException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,46 +23,56 @@ public class GraphLoader {
     private final EdgeRepository edgeRepository;
     public static final double FLOOR_HEIGHT_M = 2.3;
 
-    @PostConstruct
+    private final Object reloadLock = new Object();
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void initialLoad() {
+        load(); // 서버 기동 시 1회 적재
+    }
+
     public void load() {
-        // 1. 모든 노드 정보를 DB에서 가져와 Graph에 추가
-        // DB의 모든 노드를 메모리(Graph 객체)에 올려놓음
-        List<Node> allNodes = nodeRepository.findAll();
-        for (Node node : allNodes) {
-            graph.addNode(node);
+        synchronized (reloadLock) {
+            graph.clear();
+
+            // 1. 모든 노드 정보를 DB에서 가져와 Graph에 추가
+            // DB의 모든 노드를 메모리(Graph 객체)에 올려놓음
+            List<Node> allNodes = nodeRepository.findAll();
+            for (Node node : allNodes) {
+                graph.addNode(node);
+            }
+
+            System.out.println("Node loading complete. Total nodes: " + allNodes.size());
+
+            // 2. 모든 엣지 정보를 DB에서 가져와 동적으로 거리를 계산 후 Graph에 추가
+            // "엣지는 end 노드와 start 노드의 code와 height를 참고해서 거리를 계산"
+            List<Edge> allEdges = edgeRepository.findAll(); // DB 테이블과 매핑된 엔티티
+
+            for (Edge edge : allEdges) {
+                Node startNode = graph.getNode(edge.getStartNode().getId())
+                        .orElseThrow(() -> new GeneralException(ErrorStatus.NODE_NOT_FOUND));
+                Node endNode = graph.getNode(edge.getEndNode().getId())
+                        .orElseThrow(() -> new GeneralException(ErrorStatus.NODE_NOT_FOUND));
+
+                double calculatedWeight = calculateDistance(startNode, endNode);
+                double calculatedWeightReverse = calculateDistance(endNode, startNode);
+
+                // 계산된 가중치(weight)를 포함하여 새로운 Edge 객체를 생성하고 Graph에 추가
+                Edge newEdge = Edge.builder()
+                        .startNode(startNode)
+                        .endNode(endNode)
+                        .cost(calculatedWeight)
+                        .build();
+                graph.addEdge(newEdge);
+
+                Edge newEdgeReverse = Edge.builder()
+                        .startNode(endNode)
+                        .endNode(startNode)
+                        .cost(calculatedWeightReverse)
+                        .build();
+                graph.addEdge(newEdgeReverse);
+            }
+            System.out.println("Edge loading complete. Total edges: " + allEdges.size());
         }
-
-        System.out.println("Node loading complete. Total nodes: " + allNodes.size());
-
-        // 2. 모든 엣지 정보를 DB에서 가져와 동적으로 거리를 계산 후 Graph에 추가
-        // "엣지는 end 노드와 start 노드의 code와 height를 참고해서 거리를 계산"
-        List<Edge> allEdges = edgeRepository.findAll(); // DB 테이블과 매핑된 엔티티
-
-        for (Edge edge : allEdges) {
-            Node startNode = graph.getNode(edge.getStartNode().getId())
-                    .orElseThrow(() -> new GeneralException(ErrorStatus.NODE_NOT_FOUND));
-            Node endNode = graph.getNode(edge.getEndNode().getId())
-                    .orElseThrow(() -> new GeneralException(ErrorStatus.NODE_NOT_FOUND));
-
-            double calculatedWeight = calculateDistance(startNode, endNode);
-            double calculatedWeightReverse = calculateDistance(endNode, startNode);
-
-            // 계산된 가중치(weight)를 포함하여 새로운 Edge 객체를 생성하고 Graph에 추가
-            Edge newEdge = Edge.builder()
-                    .startNode(startNode)
-                    .endNode(endNode)
-                    .cost(calculatedWeight)
-                    .build();
-            graph.addEdge(newEdge);
-
-            Edge newEdgeReverse = Edge.builder()
-                    .startNode(endNode)
-                    .endNode(startNode)
-                    .cost(calculatedWeightReverse)
-                    .build();
-            graph.addEdge(newEdgeReverse);
-        }
-        System.out.println("Edge loading complete. Total edges: " + allEdges.size());
     }
 
     private double calculateDistance(Node startNode, Node endNode) {

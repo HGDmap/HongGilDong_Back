@@ -1,17 +1,18 @@
 package hongik.map.honggildong.domain.facility.entity;
 
+import hongik.map.honggildong.domain.bookmark.entity.Bookmark;
 import hongik.map.honggildong.domain.bookmarkFolder.entity.BookmarkFolder;
 import hongik.map.honggildong.domain.building.entity.Building;
 import hongik.map.honggildong.domain.node.entity.Node;
 import hongik.map.honggildong.global.common.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.List;
 
 @Builder
 @Entity @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Facility extends BaseEntity {
@@ -22,8 +23,8 @@ public class Facility extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Node node;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private BookmarkFolder bookmarkFolder;
+    @OneToMany(mappedBy = "facility", fetch = FetchType.LAZY)
+    private List<Bookmark> bookmarks;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Building building;
