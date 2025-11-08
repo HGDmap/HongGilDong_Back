@@ -5,17 +5,20 @@ import com.redis.lettucemod.search.SearchResults;
 import hongik.map.honggildong.domain.bookmark.dto.JPQLBookmarkDTO;
 import hongik.map.honggildong.domain.bookmark.repository.BookmarkRepository;
 import hongik.map.honggildong.domain.bookmarkFolder.repository.BookmarkFolderRepository;
+import hongik.map.honggildong.domain.facility.entity.Facility;
+import hongik.map.honggildong.domain.facility.repository.FacilityRepository;
+import hongik.map.honggildong.domain.image.service.ImageService;
 import hongik.map.honggildong.domain.member.entity.Member;
+import hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus;
+import hongik.map.honggildong.global.apiPayload.exception.GeneralException;
 import hongik.map.honggildong.global.redis.search.dto.SearchResultDTO;
 import hongik.map.honggildong.global.redis.search.repository.SearchRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ public class SearchServiceImpl implements SearchService{
     private final SearchRepository searchRepository;
     private final BookmarkRepository bookmarkRepository;
     private final RedisModulesCommands<String, String> commands;
+    private final FacilityRepository facilityRepository;
 
     public List<SearchResultDTO.AutoCompleteGeneral> autoComplete(String keyword) {
         String query = String.format("(@name:%s*) | (@alias:%s*)", keyword, keyword);
@@ -69,7 +73,13 @@ public class SearchServiceImpl implements SearchService{
                 .map(obj -> ((Number)obj[1]).longValue())
                 .toList();
 
-        System.out.println(buildingIds.size()+"시설:"+facilityIds.size());
+        List<Facility> facilities = facilityRepository.findAllById(facilityIds);
+
+        Map<Long,Facility> facilityMap = facilities.stream()
+                .collect(Collectors.toMap(
+                        Facility::getId,
+                        facility -> facility
+                ));
 
         //interface(native query 프로젝션)->set
         List<JPQLBookmarkDTO.SearchResult> bookmarkedList = new ArrayList<>();
@@ -98,11 +108,15 @@ public class SearchServiceImpl implements SearchService{
                 if(bookmarkedSet.contains(Pair.of(finalResult.getType(), finalResult.getId())))
                     finalResult.setIsBookmarkedTrue();
             }
-            finalResult.getPhotoList().add((String)raw[4]);
+            //mainImg 넣기
+            finalResult.getPhotoList().add(Objects.equals((String) raw[4], "") ? null:((String)raw[4]));
 
-            /**
-             * 나중에 S3에서 해당 시설 폴더에 있는 사진 2개 가져오기
-             */
+            //시설의 경우 사진 추가
+            if(((String)raw[0]).equals("FACILITY")){
+                Facility facility = facilityMap.get(((Long)raw[1]));
+                finalResult.getPhotoList().add(facility.getMainImg2());
+                finalResult.getPhotoList().add(facility.getMainImg3());
+            }
 
             return finalResult;
         }).toList();

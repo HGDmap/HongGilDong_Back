@@ -51,7 +51,8 @@ public class SecurityConfig {
                         .requestMatchers("/auth/random").authenticated()
                         .requestMatchers(
                                 "/auth/**",
-                                "/search/**"
+                                "/search/**",
+                                "/facility/*/details"
                         ).permitAll()
                         .anyRequest().authenticated()
                 );

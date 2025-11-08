@@ -21,6 +21,9 @@ public enum ErrorStatus implements BaseCode {
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND,"MEMBER404","존재하지 않는 사용자입니다."),
 
 
+    // 시설 관련 응답
+    FACILITY_NOT_FOUND(HttpStatus.NOT_FOUND,"FACILITY404","존재하지 않는 시설입니다."),
+
     //노드 관련 응답
     NODE_NOT_FOUND(HttpStatus.NOT_FOUND,"NODE404","존재하지 않는 노드입니다."),
 
@@ -31,14 +34,14 @@ public enum ErrorStatus implements BaseCode {
     // 즐겨찾기 폴더 에러 응답
     BOOKMARK_FOLDER_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOKMARK404", "즐겨찾기 폴더가 존재하지 않습니다."),
 
-    // 즐겨찾기 폴더 에러 응답
-    FACILITY_NOT_FOUND(HttpStatus.NOT_FOUND, "FACILITY404", "시설이 존재하지 않습니다."),
-
     // 즐겨찾기 시설 에러 응답
     BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "BOOKMARK404", "해당 시설의 즐겨찾기가 존재하지 않습니다."),
 
     // 빌딩 관련 에러 응답
-    BUILDING_NOT_FOUND(HttpStatus.NOT_FOUND, "BUILDING404", "건물이 존재하지 않습니다.");
+    BUILDING_NOT_FOUND(HttpStatus.NOT_FOUND, "BUILDING404", "건물이 존재하지 않습니다."),
+
+    // S3 관련 에러 응답
+    S3_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S3500", "S3에서 정보를 가져오는 중 에러가 발생했습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

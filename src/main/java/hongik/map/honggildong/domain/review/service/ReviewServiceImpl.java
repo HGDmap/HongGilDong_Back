@@ -1,15 +1,29 @@
 package hongik.map.honggildong.domain.review.service;
 
 import hongik.map.honggildong.domain.facility.entity.Facility;
+import hongik.map.honggildong.domain.likes.repository.LikeRepository;
 import hongik.map.honggildong.domain.member.entity.Member;
+import hongik.map.honggildong.domain.review.converter.ReviewConverter;
 import hongik.map.honggildong.domain.review.dto.ReviewRequestDTO;
+import hongik.map.honggildong.domain.review.dto.ReviewResponseDTO;
 import hongik.map.honggildong.domain.review.entity.Review;
+import hongik.map.honggildong.domain.review.repository.ReviewRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
+
+    private final ReviewRepository reviewRepository;
+    private final LikeRepository likeRepository;
+
     //특정 멤버의 리뷰 리스트
     @Override
     public Page<Review> getReviewListOf(Member member, Pageable pageable) {
@@ -18,8 +32,14 @@ public class ReviewServiceImpl implements ReviewService {
 
     //특정 시설의 리뷰 리스트
     @Override
-    public Page<Review> getReviewListOf(Facility facility, Pageable pageable) {
-        return null;
+    public ReviewResponseDTO.GeneralPage getReviewListOf(Facility facility, Member member, Pageable pageable) {
+
+        Page<Review> reviewPage = reviewRepository.findAllByFacility(facility, pageable);
+        List<Long> reviewIds = reviewPage.getContent().stream().map(Review::getId).toList();
+
+        List<Long> likedReviews = likeRepository.findAllByReviewsAndMemberId(member.getId(),reviewIds);
+
+        return ReviewConverter.toGeneralPageDTO(reviewPage, likedReviews);
     }
 
     @Override

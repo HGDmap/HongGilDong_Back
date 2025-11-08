@@ -36,4 +36,6 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     List<Bookmark> findAllByBookmarkFolder(BookmarkFolder folder);
 
     Optional<Bookmark> findByBuildingAndMember(Building building, Member member);
+
+    Boolean existsByMemberAndFacility(Member member, Facility facility);
 }

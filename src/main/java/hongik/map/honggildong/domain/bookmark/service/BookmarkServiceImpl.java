@@ -26,6 +26,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class BookmarkServiceImpl implements BookmarkService {
 
     private final BookmarkFolderRepository bookmarkFolderRepository;

@@ -6,6 +6,7 @@ import hongik.map.honggildong.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
 @Builder @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class Review extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +27,7 @@ public class Review extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Facility facility;
 
+    private String title; //건물 이름
     private String content;
 
     private Integer rating;
@@ -35,4 +38,7 @@ public class Review extends BaseEntity {
     @OrderColumn(name="image_order")
     @Builder.Default
     private List<String> images = new ArrayList<String>();
+
+    @Builder.Default
+    private Long likedCnt = 0L;
 }

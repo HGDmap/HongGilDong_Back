@@ -11,4 +11,6 @@ public interface BookmarkService {
     BookmarkResponseDTO.Single deleteBookmark(CustomUserDetails userDetails, Long facilityId, BookmarkType bookmarkType);
 
     BookmarkResponseDTO.All allBookmark(CustomUserDetails userDetails);
+
+
 }

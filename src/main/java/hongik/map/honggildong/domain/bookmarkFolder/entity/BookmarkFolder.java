@@ -27,9 +27,6 @@ public class BookmarkFolder extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Building building;
-
     @OneToMany(mappedBy = "bookmarkFolder", fetch = FetchType.LAZY)
     private List<Bookmark> bookmarks = new ArrayList<>();
 }

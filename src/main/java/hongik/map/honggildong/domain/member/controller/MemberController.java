@@ -20,6 +20,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @Tag(name="회원")
@@ -59,11 +62,12 @@ public class MemberController {
 
     //내가 쓴 리뷰 리스트 조회
     @GetMapping("/mypage/reviews")
-    public ApiResponse<Page<ReviewResponseDTO.General>> getMyReviews(@AuthenticationPrincipal UserDetails userDetails,
+    public ApiResponse<ReviewResponseDTO.MyGeneralPage> getMyReviews(@AuthenticationPrincipal UserDetails userDetails,
                                                                      @ParameterObject Pageable pageable) {
         Member member = memberService.getMemberByUserDetails(userDetails);
         Page<Review> reviews = reviewService.getReviewListOf(member,pageable);
-        Page<ReviewResponseDTO.General> body = reviews.map(ReviewConverter::toGeneralDTO);
+        List<Long> likedReviewIds = new ArrayList<>();
+        ReviewResponseDTO.MyGeneralPage body = ReviewConverter.toMyGeneralPage(reviews,likedReviewIds);
 
         return ApiResponse.onSuccess(body);
     }
@@ -74,7 +78,7 @@ public class MemberController {
                                                                    @ParameterObject Pageable pageable) {
         Member member = memberService.getMemberByUserDetails(userDetails);
         Page<Review> reviews = likeService.getLikedReviewListOf(member,pageable);
-        Page<ReviewResponseDTO.General> body = reviews.map(ReviewConverter::toGeneralDTO);
+        Page<ReviewResponseDTO.General> body = reviews.map(rw->ReviewConverter.toGeneralDTO(rw,true));
 
         return ApiResponse.onSuccess(body);
     }

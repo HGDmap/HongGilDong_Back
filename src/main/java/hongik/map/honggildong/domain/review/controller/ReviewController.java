@@ -35,7 +35,9 @@ public class ReviewController {
         Member member = memberServiceImpl.getMemberByUserDetails(userDetails);
 
         Review review = reviewServiceImpl.getReviewById(reviewId);
-        ReviewResponseDTO.General body = ReviewConverter.toGeneralDTO(review);
+        //추후 수정
+        Boolean isLiked = true;
+        ReviewResponseDTO.General body = ReviewConverter.toGeneralDTO(review, isLiked);
 
         return ApiResponse.onSuccess(body);
     }
@@ -47,7 +49,7 @@ public class ReviewController {
         Member member = memberServiceImpl.getMemberByUserDetails(userDetails);
 
         Review review = reviewServiceImpl.createReviewOf(member, request);
-        ReviewResponseDTO.General body = ReviewConverter.toGeneralDTO(review);
+        ReviewResponseDTO.General body = ReviewConverter.toGeneralDTO(review, false);
 
         return ApiResponse.onSuccess(body);
     }
@@ -69,8 +71,10 @@ public class ReviewController {
                                                                @AuthenticationPrincipal UserDetails userDetails) {
         Member member = memberServiceImpl.getMemberByUserDetails(userDetails);
         Review review = reviewServiceImpl.getReviewById(reviewId);
+        //추후 수정
+        Boolean isLiked = true;
 
-        ReviewResponseDTO.General body = ReviewConverter.toGeneralDTO(reviewServiceImpl.updateReviewOf(member, review));
+        ReviewResponseDTO.General body = ReviewConverter.toGeneralDTO(reviewServiceImpl.updateReviewOf(member, review), isLiked);
 
         return ApiResponse.onSuccess(body);
     }

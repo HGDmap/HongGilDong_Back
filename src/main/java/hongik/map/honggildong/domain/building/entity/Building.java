@@ -31,7 +31,4 @@ public class Building extends BaseEntity {
 
     @OneToOne
     private Node mainNode;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private BookmarkFolder bookmarkFolder;
 }

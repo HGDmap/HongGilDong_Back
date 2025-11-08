@@ -5,12 +5,25 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 public class FacilityResponseDTO {
     @Builder @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Detail {
         private Long id;
+        private String type;
+        private Long nodeId;
+        private String nodeName;
+        private String open;
+        private String phone;
+        private String link;
+        private String description;
+        private Double latitude;
+        private Double longitude;
+        private List<String> photoList;
+        private Boolean isBookmarked;
         //상세 정보 조회 시 요청자가 bookmark 했는지 여부를 나타내는 필드도 필요
     }
 
