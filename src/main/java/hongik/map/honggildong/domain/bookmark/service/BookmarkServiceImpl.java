@@ -180,7 +180,7 @@ public class BookmarkServiceImpl implements BookmarkService {
                         return BookmarkResponseDTO.FacilityDetail.builder()
                                 .id(fac.getId())
                                 .name(fac.getName())
-                                .location(fac.getLocationDetail())
+                                .location(fac.getNode().getName())
                                 .openInfo(fac.getOpenInfo())
                                 .image(fac.getMainImg())
                                 .latitude(b.getLatitude())
