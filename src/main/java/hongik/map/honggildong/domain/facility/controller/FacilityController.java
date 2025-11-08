@@ -1,10 +1,12 @@
 package hongik.map.honggildong.domain.facility.controller;
 
-import hongik.map.honggildong.domain.bookmarkFolder.repository.BookmarkFolderRepository;
 import hongik.map.honggildong.domain.facility.converter.FacilityConverter;
 import hongik.map.honggildong.domain.facility.dto.FacilityResponseDTO;
 import hongik.map.honggildong.domain.facility.entity.Facility;
 import hongik.map.honggildong.domain.facility.service.FacilityService;
+import hongik.map.honggildong.domain.image.dto.ImageRequestDTO;
+import hongik.map.honggildong.domain.image.dto.ImageResponseDTO;
+import hongik.map.honggildong.domain.image.service.ImageService;
 import hongik.map.honggildong.domain.review.dto.ReviewResponseDTO;
 import hongik.map.honggildong.domain.review.service.ReviewService;
 import hongik.map.honggildong.global.apiPayload.ApiResponse;
@@ -15,7 +17,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +30,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FacilityController {
 
-    private final ReviewService reviewServiceImpl;
-    private final FacilityService facilityServiceImpl;
-    private final BookmarkFolderRepository bookmarkFolderRepository;
+    private final ReviewService reviewService;
+    private final FacilityService facilityService;
+    private final ImageService imageService;
 
     //특정 시설의 전체 리뷰 조회
     @GetMapping("/{facilityId}/reviews")
@@ -42,9 +43,9 @@ public class FacilityController {
         if(userDetails==null){
             throw new GeneralException(ErrorStatus.UNAUTHORIZED);
         }
-        Facility facility = facilityServiceImpl.getFacilityById(facilityId);
+        Facility facility = facilityService.getFacilityById(facilityId);
 
-        ReviewResponseDTO.GeneralPage body = reviewServiceImpl.getReviewListOf(facility, userDetails.getMember(),pageable);
+        ReviewResponseDTO.GeneralPage body = reviewService.getReviewListOf(facility, userDetails.getMember(),pageable);
 
         return ApiResponse.onSuccess(body);
     }
@@ -55,7 +56,7 @@ public class FacilityController {
     public ApiResponse<FacilityResponseDTO.Detail> getFacilityDetail(@PathVariable("facilityId") Long facilityId,
                                                                      @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        Facility facility = facilityServiceImpl.getFacilityById(facilityId);
+        Facility facility = facilityService.getFacilityById(facilityId);
         Boolean isBookmarked = false;
         if(userDetails!=null){
             //윤정 bookmark repository완성ㄹ하면 변경
@@ -70,15 +71,18 @@ public class FacilityController {
     }
 
     //특정 시설 사진 모아보기
-    @GetMapping("/{facilityId}/photos")
-    @Operation(summary = "특정 시설의 전체 사진 조회")
-    public ApiResponse<String> getFacilityPhotos(@PathVariable("facilityId") Long facilityId,
-                                                 @ParameterObject Pageable pageable,
-                                                 @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Facility facility = facilityServiceImpl.getFacilityById(facilityId);
-        //PresignedUrl으로 저장 시 이미지 키 값을 시설i d로 구분하여 지정할 것
+    @PostMapping("/{facilityId}/photos")
+    @Operation(summary = "특정 시설의 사진 조회")
+    public ApiResponse<ImageResponseDTO.ImagePage> getFacilityImages(@PathVariable("facilityId") Long facilityId,
+                                                                     @RequestBody ImageRequestDTO.GetImagePageDTO request) {
+        Facility facility = facilityService.getFacilityById(facilityId);
 
-        return ApiResponse.onSuccess("Page<ImageDTO>");
+        String continuationToken = request.getContinuationToken();
+        int size = request.getSize();
+
+        ImageResponseDTO.ImagePage body = imageService.getPhotoPageOfFacility(facility, continuationToken, size);
+
+        return ApiResponse.onSuccess(body);
     }
 
 }
