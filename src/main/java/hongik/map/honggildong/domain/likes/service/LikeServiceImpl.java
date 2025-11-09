@@ -15,7 +15,7 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public Likes createOrDeleteLikeOf(Member member, Review review) {
+    public Likes createOrDeleteLikeOf(Member member, Long reviewId) {
         return null;
     }
 }

@@ -9,5 +9,5 @@ import org.springframework.data.domain.Pageable;
 public interface LikeService {
     Page<Review> getLikedReviewListOf(Member member, Pageable pageable);
 
-    Likes createOrDeleteLikeOf(Member member, Review review);
+    Likes createOrDeleteLikeOf(Member member, Long reviewId);
 }

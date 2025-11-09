@@ -12,12 +12,12 @@ public interface ReviewService {
     Page<Review> getReviewListOf(Member member, Pageable pageable);
     ReviewResponseDTO.GeneralPage getReviewListOf(Facility facility, Member member, Pageable pageable);
 
-    Review getReviewById(Long reviewId);
+    ReviewResponseDTO.General getReviewById(Member member, Long reviewId);
 
 
     Review createReviewOf(Member member, ReviewRequestDTO.create request, Facility facility);
 
-    void deleteReviewOf(Member member, Review review);
+    void deleteReviewOf(Member member, Long reviewId);
 
-    Review updateReviewOf(Member member, Review review);
+    Review updateReviewOf(Member member, Long reviewId);
 }

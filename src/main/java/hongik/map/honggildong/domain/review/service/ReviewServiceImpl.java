@@ -8,6 +8,8 @@ import hongik.map.honggildong.domain.review.dto.ReviewRequestDTO;
 import hongik.map.honggildong.domain.review.dto.ReviewResponseDTO;
 import hongik.map.honggildong.domain.review.entity.Review;
 import hongik.map.honggildong.domain.review.repository.ReviewRepository;
+import hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus;
+import hongik.map.honggildong.global.apiPayload.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,8 +45,13 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Review getReviewById(Long reviewId) {
-        return null;
+    public ReviewResponseDTO.General getReviewById(Member member, Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(()->new GeneralException(ErrorStatus.REVIEW_NOT_FOUND));
+
+        Boolean isLiked = likeRepository.existsByMemberAndReview(member,review);
+
+        return ReviewConverter.toGeneralDTO(review, isLiked);
     }
 
     @Override
@@ -57,12 +64,12 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void deleteReviewOf(Member member, Review review) {
+    public void deleteReviewOf(Member member, Long reviewId) {
 
     }
 
     @Override
-    public Review updateReviewOf(Member member, Review review) {
+    public Review updateReviewOf(Member member, Long reviewId) {
         return null;
     }
 }

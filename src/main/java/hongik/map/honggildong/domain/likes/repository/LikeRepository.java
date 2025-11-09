@@ -1,6 +1,7 @@
 package hongik.map.honggildong.domain.likes.repository;
 
 import hongik.map.honggildong.domain.likes.entity.Likes;
+import hongik.map.honggildong.domain.member.entity.Member;
 import hongik.map.honggildong.domain.review.entity.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -26,4 +27,6 @@ public interface LikeRepository extends JpaRepository<Likes,Long> {
         WHERE l.member.id =:memberId AND l.review.id IN :reviews
     """)
     List<Long> findAllByReviewsAndMemberId(@Param("memberId") Long memberId, @Param("reviews") List<Long> reviewIds);
+
+    Boolean existsByMemberAndReview(Member member, Review review);
 }
