@@ -1,4 +1,4 @@
-package hongik.map.honggildong.domain.facility.dto;
+package hongik.map.honggildong.domain.building.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,11 +7,13 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-public class FacilityResponseDTO {
-    @Builder @Getter
-    @NoArgsConstructor
+public class BuildingResponseDTO {
+
+    @Builder
+    @Getter
     @AllArgsConstructor
-    public static class Detail {
+    @NoArgsConstructor
+    public static class Detail{
         private Long id;
         private String name;
         private String type;
@@ -25,14 +27,6 @@ public class FacilityResponseDTO {
         private Double longitude;
         private List<String> photoList;
         private Boolean isBookmarked;
-    }
 
-    //추후에 bookmark dto 로 옮기는 것 고려
-    @Builder @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class BookmarkStatus {
-        private Long facilityId;
-        private Boolean isBookMarked;
     }
 }
