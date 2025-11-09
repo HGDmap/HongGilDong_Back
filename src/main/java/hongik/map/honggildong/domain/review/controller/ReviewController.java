@@ -75,14 +75,12 @@ public class ReviewController {
     //리뷰 수정
     @PatchMapping("/{reviewId}")
     @Operation(summary = "특정 리뷰 수정")
-    public ApiResponse<ReviewResponseDTO.General> updateReview(@PathVariable Long reviewId,
+    public ApiResponse<ReviewResponseDTO.General> updateReview(@PathVariable("reviewId") Long reviewId,
+                                                               @RequestBody ReviewRequestDTO.create request,
                                                                @AuthenticationPrincipal CustomUserDetails userDetails) {
         Member member = memberService.getMemberByUserDetails(userDetails);
-        Review review = reviewService.updateReviewOf(member,reviewId);
-        //추후 수정
-        Boolean isLiked = true;
 
-        ReviewResponseDTO.General body = ReviewConverter.toGeneralDTO(review, isLiked);
+        ReviewResponseDTO.General body = reviewService.updateReviewOf(userDetails.getMember(),reviewId, request);
 
         return ApiResponse.onSuccess(body);
     }

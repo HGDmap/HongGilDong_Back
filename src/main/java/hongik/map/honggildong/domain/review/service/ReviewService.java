@@ -19,5 +19,5 @@ public interface ReviewService {
 
     void deleteReviewOf(Member member, Long reviewId);
 
-    Review updateReviewOf(Member member, Long reviewId);
+    ReviewResponseDTO.General updateReviewOf(Member member, Long reviewId, ReviewRequestDTO.create request);
 }

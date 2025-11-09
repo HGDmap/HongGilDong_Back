@@ -13,10 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
@@ -169,5 +166,27 @@ public class ImageServiceImpl implements ImageService {
         } catch (Exception e) {
             throw new GeneralException(ErrorStatus.S3_ERROR);
         }
+    }
+
+    @Override
+    @Transactional
+    public void deleteImages(List<String> images) {
+        String keyPrefix = "https://" + bucket + ".s3." + region + ".amazonaws.com/";
+
+        List<ObjectIdentifier> objectIdentifiers = images.stream()
+                .map(img -> {
+                    String key = img.replace(keyPrefix, "");
+                    return ObjectIdentifier.builder().key(key).build();
+                })
+                .toList();
+
+        if (objectIdentifiers.isEmpty()) return;
+
+        DeleteObjectsRequest deleteRequest = DeleteObjectsRequest.builder()
+                .bucket(bucket)
+                .delete(Delete.builder().objects(objectIdentifiers).build())
+                .build();
+
+        s3Client.deleteObjects(deleteRequest);
     }
 }

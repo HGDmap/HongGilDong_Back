@@ -2,6 +2,8 @@ package hongik.map.honggildong.domain.review.entity;
 
 import hongik.map.honggildong.domain.facility.entity.Facility;
 import hongik.map.honggildong.domain.member.entity.Member;
+import hongik.map.honggildong.domain.review.dto.ReviewRequestDTO;
+import hongik.map.honggildong.domain.review.dto.ReviewResponseDTO;
 import hongik.map.honggildong.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -41,4 +43,11 @@ public class Review extends BaseEntity {
 
     @Builder.Default
     private Long likedCnt = 0L;
+
+    public Review update(String content, List<String> photoList) {
+        this.content = content;
+        this.images = photoList;
+
+        return this;
+    }
 }

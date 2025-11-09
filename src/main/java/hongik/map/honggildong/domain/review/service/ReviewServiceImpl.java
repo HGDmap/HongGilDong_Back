@@ -1,6 +1,7 @@
 package hongik.map.honggildong.domain.review.service;
 
 import hongik.map.honggildong.domain.facility.entity.Facility;
+import hongik.map.honggildong.domain.image.service.ImageService;
 import hongik.map.honggildong.domain.likes.repository.LikeRepository;
 import hongik.map.honggildong.domain.member.entity.Member;
 import hongik.map.honggildong.domain.review.converter.ReviewConverter;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,6 +27,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final LikeRepository likeRepository;
+    private final ImageService imageService;
 
     //특정 멤버의 리뷰 리스트
     @Override
@@ -69,7 +72,27 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Review updateReviewOf(Member member, Long reviewId) {
-        return null;
+    @Transactional
+    public ReviewResponseDTO.General updateReviewOf(Member member, Long reviewId, ReviewRequestDTO.create request) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(()->new GeneralException(ErrorStatus.REVIEW_NOT_FOUND));
+
+        //본인 확인
+        if(!Objects.equals(review.getMember().getId(), member.getId())){
+            throw new GeneralException(ErrorStatus.NO_QUALIFICATION);
+        }
+
+        List<String> newImageList = request.getPhotoList();
+        List<String> removalTarget = review.getImages();
+        removalTarget.removeAll(newImageList);
+
+        Review updatedReview = review.update(request.getContent(), newImageList);
+
+        imageService.deleteImages(removalTarget);
+
+        Boolean isLiked = likeRepository.existsByMemberAndReview(member,updatedReview);
+
+
+        return ReviewConverter.toGeneralDTO(updatedReview,isLiked);
     }
 }
