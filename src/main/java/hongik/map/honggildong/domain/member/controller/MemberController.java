@@ -11,13 +11,13 @@ import hongik.map.honggildong.domain.review.dto.ReviewResponseDTO;
 import hongik.map.honggildong.domain.review.entity.Review;
 import hongik.map.honggildong.domain.review.service.ReviewService;
 import hongik.map.honggildong.global.apiPayload.ApiResponse;
+import hongik.map.honggildong.global.security.service.CustomUserDetails;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class MemberController {
 
     //회원 정보 조회
     @GetMapping("")
-    public ApiResponse<MemberResponseDTO.General> getMember(@AuthenticationPrincipal UserDetails userDetails) {
+    public ApiResponse<MemberResponseDTO.General> getMember(@AuthenticationPrincipal CustomUserDetails userDetails) {
         Member member = memberService.getMemberByUserDetails(userDetails);
         MemberResponseDTO.General body = MemberConverter.toGeneralDTO(member);
 
@@ -43,7 +43,7 @@ public class MemberController {
 
     //회원 프로필 변경
     @PatchMapping("/mypage/profile")
-    public ApiResponse<MemberResponseDTO.General> updateMember(@AuthenticationPrincipal UserDetails userDetails,
+    public ApiResponse<MemberResponseDTO.General> updateMember(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                             @RequestBody MemberRequestDTO.UpdateProfile request) {
         Member member = memberService.getMemberByUserDetails(userDetails);
         MemberResponseDTO.General body = MemberConverter.toGeneralDTO(memberService.updateProfile(member, request));
@@ -53,7 +53,7 @@ public class MemberController {
 
     //회원 탈퇴
     @DeleteMapping("/delete")
-    public ApiResponse<String> deleteMember(@AuthenticationPrincipal UserDetails userDetails) {
+    public ApiResponse<String> deleteMember(@AuthenticationPrincipal CustomUserDetails userDetails) {
         Member member = memberService.getMemberByUserDetails(userDetails);
         memberService.deleteMember(member);
 
@@ -62,7 +62,7 @@ public class MemberController {
 
     //내가 쓴 리뷰 리스트 조회
     @GetMapping("/mypage/reviews")
-    public ApiResponse<ReviewResponseDTO.MyGeneralPage> getMyReviews(@AuthenticationPrincipal UserDetails userDetails,
+    public ApiResponse<ReviewResponseDTO.MyGeneralPage> getMyReviews(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                      @ParameterObject Pageable pageable) {
         Member member = memberService.getMemberByUserDetails(userDetails);
         Page<Review> reviews = reviewService.getReviewListOf(member,pageable);
@@ -74,7 +74,7 @@ public class MemberController {
 
     //내가 좋아요한 리뷰 리스트 조회
     @GetMapping("/mypage/likes")
-    public ApiResponse<Page<ReviewResponseDTO.General>> getMyLikes(@AuthenticationPrincipal UserDetails userDetails,
+    public ApiResponse<Page<ReviewResponseDTO.General>> getMyLikes(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                    @ParameterObject Pageable pageable) {
         Member member = memberService.getMemberByUserDetails(userDetails);
         Page<Review> reviews = likeService.getLikedReviewListOf(member,pageable);

@@ -1,5 +1,8 @@
 package hongik.map.honggildong.domain.review.converter;
 
+import hongik.map.honggildong.domain.facility.entity.Facility;
+import hongik.map.honggildong.domain.member.entity.Member;
+import hongik.map.honggildong.domain.review.dto.ReviewRequestDTO;
 import hongik.map.honggildong.domain.review.dto.ReviewResponseDTO;
 import hongik.map.honggildong.domain.review.entity.Review;
 import org.springframework.data.domain.Page;
@@ -7,6 +10,17 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public class ReviewConverter {
+
+    public static Review toReview(Member member, Facility facility, ReviewRequestDTO.create request){
+
+        return Review.builder()
+                .member(member)
+                .facility(facility)
+                .content(request.getContent())
+                .images(request.getPhotoList())
+                .build();
+    }
+
     public static ReviewResponseDTO.General toGeneralDTO(Review review, Boolean isLiked) {
         return ReviewResponseDTO.General.builder()
                 .id(review.getId())

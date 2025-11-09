@@ -15,7 +15,7 @@ public interface ReviewService {
     Review getReviewById(Long reviewId);
 
 
-    Review createReviewOf(Member member, ReviewRequestDTO request);
+    Review createReviewOf(Member member, ReviewRequestDTO.create request, Facility facility);
 
     void deleteReviewOf(Member member, Review review);
 

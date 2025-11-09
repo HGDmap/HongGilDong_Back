@@ -48,8 +48,12 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Review createReviewOf(Member member, ReviewRequestDTO request) {
-        return null;
+    @Transactional
+    public Review createReviewOf(Member member, ReviewRequestDTO.create request, Facility facility) {
+
+        Review review = ReviewConverter.toReview(member, facility, request);
+
+        return reviewRepository.save(review);
     }
 
     @Override
