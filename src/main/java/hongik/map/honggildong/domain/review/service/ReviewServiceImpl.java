@@ -47,6 +47,7 @@ public class ReviewServiceImpl implements ReviewService {
         return ReviewConverter.toGeneralPageDTO(reviewPage, likedReviews);
     }
 
+    //특정 리뷰 1개
     @Override
     public ReviewResponseDTO.General getReviewById(Member member, Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
@@ -67,7 +68,21 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Transactional
     public void deleteReviewOf(Member member, Long reviewId) {
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(()->new GeneralException(ErrorStatus.REVIEW_NOT_FOUND));
+
+        //본인확인
+        if(!review.getMember().getId().equals(member.getId())){
+            throw new GeneralException(ErrorStatus.NO_QUALIFICATION);
+        }
+
+        //이미지 모두 삭제
+        imageService.deleteImages(review.getImages());
+        //엔티티 삭제
+        reviewRepository.delete(review);
 
     }
 

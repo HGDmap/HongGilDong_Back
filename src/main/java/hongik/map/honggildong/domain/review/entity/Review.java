@@ -29,7 +29,6 @@ public class Review extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Facility facility;
 
-    private String title; //건물 이름
     private String content;
 
     private Integer rating;

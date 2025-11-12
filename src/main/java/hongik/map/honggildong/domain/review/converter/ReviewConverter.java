@@ -56,7 +56,6 @@ public class ReviewConverter {
         return ReviewResponseDTO.MyGeneral.builder()
                 .id(review.getId())
                 .rating(review.getRating())
-                .title(review.getTitle())
                 .content(review.getContent())
                 .createdAt(review.getCreatedAt())
                 .updatedAt(review.getUpdatedAt())

@@ -16,6 +16,8 @@ import hongik.map.honggildong.domain.review.entity.Review;
 import hongik.map.honggildong.domain.review.repository.ReviewRepository;
 import hongik.map.honggildong.domain.review.service.ReviewService;
 import hongik.map.honggildong.global.apiPayload.ApiResponse;
+import hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus;
+import hongik.map.honggildong.global.apiPayload.exception.GeneralException;
 import hongik.map.honggildong.global.security.service.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,6 +54,7 @@ public class ReviewController {
     public ApiResponse<ReviewResponseDTO.General> createReview(@RequestBody ReviewRequestDTO.create request,
                                                                @PathVariable("facilityId") Long facilityId,
                                                                @AuthenticationPrincipal CustomUserDetails userDetails) {
+
         //Member member = memberService.getMemberByUserDetails(userDetails);
         Facility facility = facilityService.getFacilityById(facilityId);
 
@@ -66,7 +69,12 @@ public class ReviewController {
     @Operation(summary = "특정 리뷰 삭제")
     public ApiResponse<String> deleteReview(@PathVariable("reviewId") Long reviewId,
                                             @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Member member = memberService.getMemberByUserDetails(userDetails);
+
+        if(userDetails==null){
+            throw new GeneralException(ErrorStatus.UNAUTHORIZED);
+        }
+
+        Member member = userDetails.getMember();
         reviewService.deleteReviewOf(member, reviewId);
 
         return ApiResponse.onSuccess("삭제에 성공했습니다.");
