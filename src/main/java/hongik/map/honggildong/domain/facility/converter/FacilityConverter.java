@@ -14,6 +14,7 @@ public class FacilityConverter {
 
         return FacilityResponseDTO.Detail.builder()
                 .id(facility.getId())
+                .name(facility.getName())
                 .type("FACILITY")
                 .nodeId(node.getId())
                 .nodeName(node.getName())

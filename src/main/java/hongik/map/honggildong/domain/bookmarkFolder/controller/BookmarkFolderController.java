@@ -6,6 +6,7 @@ import hongik.map.honggildong.domain.bookmarkFolder.dto.BookmarkFolderResponseDT
 import hongik.map.honggildong.domain.bookmarkFolder.service.BookmarkFolderService;
 import hongik.map.honggildong.global.apiPayload.ApiResponse;
 import hongik.map.honggildong.global.security.service.CustomUserDetails;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class BookmarkFolderController {
 
     // 즐겨찾기 폴더 생성
     @PostMapping
+    @Operation(summary = "즐겨찾기 폴더 생성")
     public ApiResponse<BookmarkResponseDTO.All> createFolder(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                       @RequestBody BookmarkFolderRequestDTO.Create createFolderRequestDTO) {
 
@@ -31,7 +33,8 @@ public class BookmarkFolderController {
 
     // 단일 즐겨찾기 폴더 내 즐겨찾기 목록 조회
     @GetMapping("/{folderId}")
-    public ApiResponse<BookmarkResponseDTO.Single> getBookmarkList(@PathVariable Long folderId,
+    @Operation(summary = "단일 즐겨찾기 폴더 내에 속한 북마크 목록 조회")
+    public ApiResponse<BookmarkResponseDTO.Single> getBookmarkList(@PathVariable("folderId") Long folderId,
                                                                     @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         BookmarkResponseDTO.Single body = bookmarkFolderService.singleBookmarkFolder(folderId, userDetails);
@@ -40,7 +43,8 @@ public class BookmarkFolderController {
 
     // 즐겨찾기 폴더 삭제
     @DeleteMapping("/{folderId}")
-    public ApiResponse<BookmarkResponseDTO.All> deleteFolder(@PathVariable Long folderId,
+    @Operation(summary = "폴더 삭제, 내부 모든 북마크도 함께 삭제")
+    public ApiResponse<BookmarkResponseDTO.All> deleteFolder(@PathVariable("folderId") Long folderId,
                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         BookmarkResponseDTO.All body = bookmarkFolderService.deleteBookmarkFolder(folderId, userDetails);
@@ -50,7 +54,8 @@ public class BookmarkFolderController {
 
     // 즐겨찾기 폴더 수정
     @PutMapping("/{folderId}")
-    public ApiResponse<BookmarkResponseDTO.All> updateFolder(@PathVariable Long folderId,
+    @Operation(summary = "북마크 폴더 수정")
+    public ApiResponse<BookmarkResponseDTO.All> updateFolder(@PathVariable("folderId") Long folderId,
                                                                       @AuthenticationPrincipal CustomUserDetails userDetails,
                                                                       @RequestBody BookmarkFolderRequestDTO.Update updateFolderRequestDTO) {
 
