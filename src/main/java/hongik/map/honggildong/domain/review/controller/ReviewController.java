@@ -35,15 +35,18 @@ public class ReviewController {
     private final MemberService memberService;
     private final LikeService likeService;
     private final FacilityService facilityService;
+    private final ReviewRepository reviewRepository;
 
     //특정 리뷰 조회
     @GetMapping("/{reviewId}")
     @Operation(summary = "특정 리뷰 조회")
     public ApiResponse<ReviewResponseDTO.General> getReview(@PathVariable("reviewId") Long reviewId,
                                                             @AuthenticationPrincipal CustomUserDetails userDetails) {
-        //Member member = memberService.getMemberByUserDetails(userDetails);
-
-        ReviewResponseDTO.General body = reviewService.getReviewById(userDetails.getMember(), reviewId);
+        if(userDetails==null){
+            throw new GeneralException(ErrorStatus.UNAUTHORIZED);
+        }
+        Long memberId = userDetails.getMember().getId();
+        ReviewResponseDTO.General body = reviewService.getReviewById(memberId, reviewId);
 
         return ApiResponse.onSuccess(body);
     }
@@ -55,10 +58,13 @@ public class ReviewController {
                                                                @PathVariable("facilityId") Long facilityId,
                                                                @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        //Member member = memberService.getMemberByUserDetails(userDetails);
+        if(userDetails==null){
+            throw new GeneralException(ErrorStatus.UNAUTHORIZED);
+        }
         Facility facility = facilityService.getFacilityById(facilityId);
+        Member member = memberService.getMemberByUserDetails(userDetails);
 
-        Review review = reviewService.createReviewOf(userDetails.getMember(), request, facility);
+        Review review = reviewService.createReviewOf(member, request, facility);
         ReviewResponseDTO.General body = ReviewConverter.toGeneralDTO(review, false);
 
         return ApiResponse.onSuccess(body);
@@ -74,8 +80,8 @@ public class ReviewController {
             throw new GeneralException(ErrorStatus.UNAUTHORIZED);
         }
 
-        Member member = userDetails.getMember();
-        reviewService.deleteReviewOf(member, reviewId);
+        Long memberId = userDetails.getMember().getId();
+        reviewService.deleteReviewOf(memberId, reviewId);
 
         return ApiResponse.onSuccess("삭제에 성공했습니다.");
     }
@@ -86,9 +92,12 @@ public class ReviewController {
     public ApiResponse<ReviewResponseDTO.General> updateReview(@PathVariable("reviewId") Long reviewId,
                                                                @RequestBody ReviewRequestDTO.create request,
                                                                @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Member member = memberService.getMemberByUserDetails(userDetails);
+        if(userDetails==null){
+            throw new GeneralException(ErrorStatus.UNAUTHORIZED);
+        }
+        Long memberId = userDetails.getMember().getId();
 
-        ReviewResponseDTO.General body = reviewService.updateReviewOf(userDetails.getMember(),reviewId, request);
+        ReviewResponseDTO.General body = reviewService.updateReviewOf(memberId,reviewId, request);
 
         return ApiResponse.onSuccess(body);
     }
@@ -96,12 +105,19 @@ public class ReviewController {
     //리뷰 좋아요/취소
     @PutMapping("/{reviewId}")
     @Operation(summary = "특정 리뷰 좋아요 등록 및 취소")
-    public ApiResponse<LikeResponseDTO.General> createReview(@PathVariable Long reviewId,
+    public ApiResponse<LikeResponseDTO.General> createReview(@PathVariable("reviewId") Long reviewId,
                                                      @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Member member = memberService.getMemberByUserDetails(userDetails);
 
-        Likes like = likeService.createOrDeleteLikeOf(member,reviewId);
-        LikeResponseDTO.General body = LikeConverter.toGeneralDTO(like);
+        if(userDetails==null){
+            throw new GeneralException(ErrorStatus.UNAUTHORIZED);
+        }
+        Member member = memberService.getMemberByUserDetails(userDetails);
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(()->new GeneralException(ErrorStatus.REVIEW_NOT_FOUND));
+        Boolean result = likeService.createOrDeleteLikeOf(member,review);
+
+
+        LikeResponseDTO.General body = LikeConverter.toGeneralDTO(result, review.getLikedCnt());
 
         return ApiResponse.onSuccess(body);
     }

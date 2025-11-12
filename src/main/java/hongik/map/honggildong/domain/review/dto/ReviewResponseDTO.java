@@ -22,6 +22,7 @@ public class ReviewResponseDTO {
         private LocalDateTime updatedAt;
         private List<String> photoList;
         private Boolean isLiked;
+        private Long likedCnt;
     }
 
     @Builder @Getter

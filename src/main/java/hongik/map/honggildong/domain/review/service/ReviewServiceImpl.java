@@ -37,23 +37,23 @@ public class ReviewServiceImpl implements ReviewService {
 
     //특정 시설의 리뷰 리스트
     @Override
-    public ReviewResponseDTO.GeneralPage getReviewListOf(Facility facility, Member member, Pageable pageable) {
+    public ReviewResponseDTO.GeneralPage getReviewListOf(Facility facility, Long memberId, Pageable pageable) {
 
         Page<Review> reviewPage = reviewRepository.findAllByFacility(facility, pageable);
         List<Long> reviewIds = reviewPage.getContent().stream().map(Review::getId).toList();
 
-        List<Long> likedReviews = likeRepository.findAllByReviewsAndMemberId(member.getId(),reviewIds);
+        List<Long> likedReviews = likeRepository.findAllByReviewsAndMemberId(memberId,reviewIds);
 
         return ReviewConverter.toGeneralPageDTO(reviewPage, likedReviews);
     }
 
     //특정 리뷰 1개
     @Override
-    public ReviewResponseDTO.General getReviewById(Member member, Long reviewId) {
+    public ReviewResponseDTO.General getReviewById(Long memberId, Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(()->new GeneralException(ErrorStatus.REVIEW_NOT_FOUND));
 
-        Boolean isLiked = likeRepository.existsByMemberAndReview(member,review);
+        Boolean isLiked = likeRepository.existsByMemberIdAndReviewIdAndStatus(memberId,reviewId, true);
 
         return ReviewConverter.toGeneralDTO(review, isLiked);
     }
@@ -69,13 +69,13 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public void deleteReviewOf(Member member, Long reviewId) {
+    public void deleteReviewOf(Long memberId, Long reviewId) {
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(()->new GeneralException(ErrorStatus.REVIEW_NOT_FOUND));
 
         //본인확인
-        if(!review.getMember().getId().equals(member.getId())){
+        if(!review.getMember().getId().equals(memberId)){
             throw new GeneralException(ErrorStatus.NO_QUALIFICATION);
         }
 
@@ -88,12 +88,12 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public ReviewResponseDTO.General updateReviewOf(Member member, Long reviewId, ReviewRequestDTO.create request) {
+    public ReviewResponseDTO.General updateReviewOf(Long memberId, Long reviewId, ReviewRequestDTO.create request) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(()->new GeneralException(ErrorStatus.REVIEW_NOT_FOUND));
 
         //본인 확인
-        if(!Objects.equals(review.getMember().getId(), member.getId())){
+        if(!Objects.equals(review.getMember().getId(), memberId)){
             throw new GeneralException(ErrorStatus.NO_QUALIFICATION);
         }
 
@@ -105,7 +105,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         imageService.deleteImages(removalTarget);
 
-        Boolean isLiked = likeRepository.existsByMemberAndReview(member,updatedReview);
+        Boolean isLiked = likeRepository.existsByMemberIdAndReviewIdAndStatus(memberId,updatedReview.getId(), true);
 
 
         return ReviewConverter.toGeneralDTO(updatedReview,isLiked);

@@ -38,7 +38,7 @@ public class Review extends BaseEntity {
     @Column(name = "image_url")
     @OrderColumn(name="image_order")
     @Builder.Default
-    private List<String> images = new ArrayList<String>();
+    private List<String> images = new ArrayList<>();
 
     @Builder.Default
     private Long likedCnt = 0L;
@@ -48,5 +48,14 @@ public class Review extends BaseEntity {
         this.images = photoList;
 
         return this;
+    }
+
+    public Long updateLikedCnt(Boolean isLiked){
+        if(isLiked){
+            this.likedCnt++;
+        }else {
+            this.likedCnt--;
+        }
+        return this.likedCnt;
     }
 }

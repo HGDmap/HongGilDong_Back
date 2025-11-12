@@ -10,6 +10,7 @@ public class LikeResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class General {
-        private Long id;
+        private Boolean isLiked;
+        private Long reviewLikedCnt;
     }
 }

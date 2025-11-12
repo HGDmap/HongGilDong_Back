@@ -7,6 +7,7 @@ import hongik.map.honggildong.domain.review.dto.ReviewResponseDTO;
 import hongik.map.honggildong.domain.review.entity.Review;
 import org.springframework.data.domain.Page;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReviewConverter {
@@ -17,7 +18,7 @@ public class ReviewConverter {
                 .member(member)
                 .facility(facility)
                 .content(request.getContent())
-                .images(request.getPhotoList())
+                .images(request.getPhotoList()==null ? new ArrayList<>() : request.getPhotoList())
                 .build();
     }
 
@@ -32,6 +33,7 @@ public class ReviewConverter {
                 .updatedAt(review.getUpdatedAt())
                 .photoList(review.getImages())
                 .isLiked(isLiked)
+                .likedCnt(review.getLikedCnt())
                 .build();
     }
 

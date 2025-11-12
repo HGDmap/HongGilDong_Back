@@ -43,9 +43,10 @@ public class FacilityController {
         if(userDetails==null){
             throw new GeneralException(ErrorStatus.UNAUTHORIZED);
         }
+        Long memberId = userDetails.getMember().getId();
         Facility facility = facilityService.getFacilityById(facilityId);
 
-        ReviewResponseDTO.GeneralPage body = reviewService.getReviewListOf(facility, userDetails.getMember(),pageable);
+        ReviewResponseDTO.GeneralPage body = reviewService.getReviewListOf(facility, memberId ,pageable);
 
         return ApiResponse.onSuccess(body);
     }
