@@ -9,6 +9,7 @@ import hongik.map.honggildong.global.redis.search.dto.SearchResultDTO;
 import hongik.map.honggildong.global.redis.search.service.SearchService;
 import hongik.map.honggildong.global.security.service.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/search")
+@Tag(name = "검색")
 @RequiredArgsConstructor
 public class SearchController {
 

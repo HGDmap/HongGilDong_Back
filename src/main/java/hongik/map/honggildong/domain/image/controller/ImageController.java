@@ -10,6 +10,7 @@ import hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus;
 import hongik.map.honggildong.global.apiPayload.exception.GeneralException;
 import hongik.map.honggildong.global.security.service.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/image")
+@Tag(name = "S3 이미지")
 public class ImageController {
     private final ImageService imageService;
     private final FacilityRepository facilityRepository;
