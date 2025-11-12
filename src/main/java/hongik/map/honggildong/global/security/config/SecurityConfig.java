@@ -45,14 +45,16 @@ public class SecurityConfig {
                                 "/api/v1/auth/**",
                                 "/swagger-ui/**",
                                 "/swagger-resources/**",
-                                "/v3/api-docs/**",
-                                "/directions/**"
+                                "/v3/api-docs/**"
                         ).permitAll()
                         .requestMatchers("/auth/random").authenticated()
+                        //스웨거 제외 도메인 엔드포인트는 여기에 기재
                         .requestMatchers(
                                 "/auth/**",
                                 "/search/**",
-                                "/facility/*/details"
+                                "/facility/*/details",
+                                "/building/*/details",
+                                "/directions/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 );
