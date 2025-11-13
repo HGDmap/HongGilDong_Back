@@ -15,4 +15,6 @@ public interface ImageService {
     List<String> getTopNImageOfFacility(Facility facility, Integer size);
 
     ImageResponseDTO.ImagePage getPhotoPageOfFacility(Facility facility, String continuationToken, int size);
+
+    void deleteImages(List<String> images);
 }

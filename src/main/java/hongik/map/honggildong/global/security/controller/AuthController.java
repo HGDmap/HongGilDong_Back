@@ -7,6 +7,7 @@ import hongik.map.honggildong.global.security.dto.AuthResponseDTO;
 import hongik.map.honggildong.global.security.jwt.JwtTokenProvider;
 import hongik.map.honggildong.global.security.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("auth")
+@Tag(name = "가입 및 로그인")
 public class AuthController {
 
     private final AuthService authService;

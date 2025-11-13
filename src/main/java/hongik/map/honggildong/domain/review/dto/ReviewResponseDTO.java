@@ -22,6 +22,7 @@ public class ReviewResponseDTO {
         private LocalDateTime updatedAt;
         private List<String> photoList;
         private Boolean isLiked;
+        private Long likedCnt;
     }
 
     @Builder @Getter
@@ -42,7 +43,8 @@ public class ReviewResponseDTO {
     @NoArgsConstructor
     public static class MyGeneral {
         private Long id;
-        private String title;
+        private String facilityName;
+        private Long facilityId;
         private String content;
         private Integer rating;
         private LocalDateTime createdAt;

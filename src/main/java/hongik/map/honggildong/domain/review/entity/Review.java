@@ -2,6 +2,8 @@ package hongik.map.honggildong.domain.review.entity;
 
 import hongik.map.honggildong.domain.facility.entity.Facility;
 import hongik.map.honggildong.domain.member.entity.Member;
+import hongik.map.honggildong.domain.review.dto.ReviewRequestDTO;
+import hongik.map.honggildong.domain.review.dto.ReviewResponseDTO;
 import hongik.map.honggildong.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,7 +29,6 @@ public class Review extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Facility facility;
 
-    private String title; //건물 이름
     private String content;
 
     private Integer rating;
@@ -37,8 +38,24 @@ public class Review extends BaseEntity {
     @Column(name = "image_url")
     @OrderColumn(name="image_order")
     @Builder.Default
-    private List<String> images = new ArrayList<String>();
+    private List<String> images = new ArrayList<>();
 
     @Builder.Default
     private Long likedCnt = 0L;
+
+    public Review update(String content, List<String> photoList) {
+        this.content = content;
+        this.images = photoList;
+
+        return this;
+    }
+
+    public Long updateLikedCnt(Boolean isLiked){
+        if(isLiked){
+            this.likedCnt++;
+        }else {
+            this.likedCnt--;
+        }
+        return this.likedCnt;
+    }
 }

@@ -6,6 +6,7 @@ import hongik.map.honggildong.domain.facility.dto.FacilityResponseDTO;
 import hongik.map.honggildong.global.apiPayload.ApiResponse;
 import hongik.map.honggildong.global.security.service.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/building")
+@Tag(name = "빌딩")
 public class BuildingController {
 
     private final BuildingService buildingService;

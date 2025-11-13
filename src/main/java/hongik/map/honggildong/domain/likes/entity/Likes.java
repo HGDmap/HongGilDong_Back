@@ -18,9 +18,18 @@ public class Likes extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Boolean status;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Review review;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
+
+
+    public Boolean setStatusOpposite(){
+        this.status = !this.status;
+
+        return this.status;
+    }
 }

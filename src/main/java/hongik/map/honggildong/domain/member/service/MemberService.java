@@ -2,11 +2,10 @@ package hongik.map.honggildong.domain.member.service;
 
 import hongik.map.honggildong.domain.member.dto.MemberRequestDTO;
 import hongik.map.honggildong.domain.member.entity.Member;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
+import hongik.map.honggildong.global.security.service.CustomUserDetails;
 
 public interface MemberService {
-    Member getMemberByUserDetails(UserDetails userDetails);
+    Member getMemberByUserDetails(CustomUserDetails userDetails);
 
     Member updateProfile(Member member, MemberRequestDTO.UpdateProfile request);
 

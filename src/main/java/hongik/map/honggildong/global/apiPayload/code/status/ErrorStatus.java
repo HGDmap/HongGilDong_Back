@@ -15,11 +15,11 @@ public enum ErrorStatus implements BaseCode {
     BAD_REQUEST(HttpStatus.BAD_REQUEST,"COMMON400","잘못된 요청입니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"COMMON401","인증이 필요합니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
+    NO_QUALIFICATION(HttpStatus.UNAUTHORIZED,"COMMON4011","요청에 대한 자격이 없습니다."),
     
     // 멤버 관련 응답
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT,"MEMBER409","이미 존재하는 이메일입니다."),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND,"MEMBER404","존재하지 않는 사용자입니다."),
-
 
     // 시설 관련 응답
     FACILITY_NOT_FOUND(HttpStatus.NOT_FOUND,"FACILITY404","존재하지 않는 시설입니다."),
@@ -39,6 +39,10 @@ public enum ErrorStatus implements BaseCode {
 
     // 빌딩 관련 에러 응답
     BUILDING_NOT_FOUND(HttpStatus.NOT_FOUND, "BUILDING404", "건물이 존재하지 않습니다."),
+
+    //리뷰 관련 에러 응답
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW404", "리뷰가 존재하지 않습니다."),
+
 
     // S3 관련 에러 응답
     S3_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S3500", "S3에서 정보를 가져오는 중 에러가 발생했습니다.");

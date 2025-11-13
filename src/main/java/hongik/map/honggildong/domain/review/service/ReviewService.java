@@ -10,14 +10,14 @@ import org.springframework.data.domain.Pageable;
 
 public interface ReviewService {
     Page<Review> getReviewListOf(Member member, Pageable pageable);
-    ReviewResponseDTO.GeneralPage getReviewListOf(Facility facility, Member member, Pageable pageable);
+    ReviewResponseDTO.GeneralPage getReviewListOf(Facility facility, Long memberId, Pageable pageable);
 
-    Review getReviewById(Long reviewId);
+    ReviewResponseDTO.General getReviewById(Long memberId, Long reviewId);
 
 
-    Review createReviewOf(Member member, ReviewRequestDTO request);
+    Review createReviewOf(Member member, ReviewRequestDTO.create request, Facility facility);
 
-    void deleteReviewOf(Member member, Review review);
+    void deleteReviewOf(Long memberId, Long reviewId);
 
-    Review updateReviewOf(Member member, Review review);
+    ReviewResponseDTO.General updateReviewOf(Long memberId, Long reviewId, ReviewRequestDTO.create request);
 }
