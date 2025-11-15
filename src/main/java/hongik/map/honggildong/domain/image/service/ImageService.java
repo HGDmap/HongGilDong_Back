@@ -1,10 +1,8 @@
 package hongik.map.honggildong.domain.image.service;
 
 import hongik.map.honggildong.domain.facility.entity.Facility;
-import hongik.map.honggildong.domain.image.dto.ImageRequestDTO;
 import hongik.map.honggildong.domain.image.dto.ImageResponseDTO;
 import hongik.map.honggildong.domain.member.entity.Member;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -17,4 +15,6 @@ public interface ImageService {
     ImageResponseDTO.ImagePage getPhotoPageOfFacility(Facility facility, String continuationToken, int size);
 
     void deleteImages(List<String> images);
+
+    void deleteOneImage(String image);
 }

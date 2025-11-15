@@ -189,4 +189,19 @@ public class ImageServiceImpl implements ImageService {
 
         s3Client.deleteObjects(deleteRequest);
     }
+
+    @Override
+    @Transactional
+    public void deleteOneImage(String image) {
+        String keyPrefix = "https://" + bucket + ".s3." + region + ".amazonaws.com/";
+
+        String key = image.replace(keyPrefix, "");
+
+        DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .build();
+
+        s3Client.deleteObject(deleteRequest);
+    }
 }
