@@ -56,48 +56,11 @@ public class ImageServiceImpl implements ImageService {
         Long buildingId = facility.getBuilding().getId();
         Long memberId = member.getId();
 
-        List<ImageResponseDTO.PresignedDTO> urls = new ArrayList<>();
-
-        for(String fileName : fileNames) {
-            //fileName : "image.png", "image.jpg" ...
-            String baseName = fileName.substring(0, fileName.lastIndexOf('.')); //image
+        //image/review/building/2/facility/3/user/13/랜덤숫자/image.png
+        String key = "image/review/building-" + buildingId + "/facility-" + facilityId+ "/user-"+memberId;
 
 
-            String extension = fileName.substring(fileName.lastIndexOf('.') + 1); // png
-            // MIME 타입 매핑
-            String mimeType = switch (extension.toLowerCase()) {
-                case "jpg", "jpe" -> "image/jpeg";
-                case "png" -> "image/png";
-                case "gif" -> "image/gif";
-                case "webp" -> "image/webp";
-                case "svg" -> "image/svg+xml";
-                default -> "application/octet-stream";
-            };
-
-            // 현재 시각 + UUID 포함한 키 생성
-            String timestamp = LocalDateTime.now().format(FORMATTER);
-            String uniqueKey = timestamp + "_" + UUID.randomUUID() + "-" + baseName + "." + extension;
-
-            //image/review/building/2/facility/3/user/13/랜덤숫자/image.png
-            String fullPath = "image/review/building/" + buildingId + "/facility/" + facilityId+ "/user/"+memberId+"/"+uniqueKey;
-
-            PutObjectRequest objectRequest = PutObjectRequest.builder()
-                    .bucket(bucket)
-                    .key(fullPath)
-                    .contentType("image/"+extension)
-                    .build();
-            PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
-                    .signatureDuration(Duration.ofMinutes(5))
-                    .putObjectRequest(objectRequest)
-                    .build();
-            PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
-
-            String imageUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com/" + fullPath;
-
-            urls.add(ImageConverter.toDTO(presignedRequest.url(),imageUrl));
-        }
-
-        return urls;
+        return issuePresignedURL(fileNames, key);
     }
 
     /**
@@ -191,6 +154,11 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    public List<ImageResponseDTO.PresignedDTO> uploadNonReviewImages(String type, Long id, List<String> fileNames) {
+        return List.of();
+    }
+
+    @Override
     @Transactional
     public void deleteOneImage(String image) {
         String keyPrefix = "https://" + bucket + ".s3." + region + ".amazonaws.com/";
@@ -204,4 +172,51 @@ public class ImageServiceImpl implements ImageService {
 
         s3Client.deleteObject(deleteRequest);
     }
+
+
+    private List<ImageResponseDTO.PresignedDTO> issuePresignedURL(List<String> fileNames, String key){
+
+        List<ImageResponseDTO.PresignedDTO> urls = new ArrayList<>();
+
+        for(String fileName : fileNames) {
+            //fileName : "image.png", "image.jpg" ...
+            String baseName = fileName.substring(0, fileName.lastIndexOf('.')); //image
+
+
+            String extension = fileName.substring(fileName.lastIndexOf('.') + 1); // png
+            // MIME 타입 매핑
+            String mimeType = switch (extension.toLowerCase()) {
+                case "jpg", "jpe" -> "image/jpeg";
+                case "png" -> "image/png";
+                case "gif" -> "image/gif";
+                case "webp" -> "image/webp";
+                case "svg" -> "image/svg+xml";
+                default -> "application/octet-stream";
+            };
+
+            // 현재 시각 + UUID 포함한 키 생성
+            String timestamp = LocalDateTime.now().format(FORMATTER);
+            String uniqueKey = timestamp + "_" + UUID.randomUUID() + "-" + baseName + "." + extension;
+
+            String fullPath = key+"/"+uniqueKey;
+
+            PutObjectRequest objectRequest = PutObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(fullPath)
+                    .contentType("image/"+extension)
+                    .build();
+            PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
+                    .signatureDuration(Duration.ofMinutes(5))
+                    .putObjectRequest(objectRequest)
+                    .build();
+            PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
+
+            String imageUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com/" + fullPath;
+
+            urls.add(ImageConverter.toDTO(presignedRequest.url(),imageUrl));
+        }
+
+        return urls;
+    }
+
 }
