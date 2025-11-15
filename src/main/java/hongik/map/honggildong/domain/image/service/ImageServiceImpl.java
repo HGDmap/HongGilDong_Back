@@ -79,7 +79,7 @@ public class ImageServiceImpl implements ImageService {
             String uniqueKey = timestamp + "_" + UUID.randomUUID() + "-" + baseName + "." + extension;
 
             //image/review/building/2/facility/3/user/13/랜덤숫자/image.png
-            String fullPath = "image/review/building/" + buildingId + "/facility/" + facilityId+ "/user/"+memberId+"/"+uniqueKey;
+            String fullPath = "image/review/building-" + buildingId + "/facility-" + facilityId+ "/user-"+memberId+"/"+uniqueKey;
 
             PutObjectRequest objectRequest = PutObjectRequest.builder()
                     .bucket(bucket)
@@ -111,7 +111,7 @@ public class ImageServiceImpl implements ImageService {
         Long buildingId = facility.getBuilding().getId();
         Long facilityId = facility.getId();
 
-        String prefix = "image/review/building/" + buildingId + "/facility/" + facilityId + "/";
+        String prefix = "image/review/building-" + buildingId + "/facility-" + facilityId + "/";
 
         if(size >0){
             ListObjectsV2Request request = ListObjectsV2Request.builder()
@@ -138,7 +138,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public ImageResponseDTO.ImagePage getPhotoPageOfFacility(Facility facility, String continuationToken, int pageSize) {
 
-        String prefix = "image/review/building/" + facility.getBuilding().getId() + "/facility/" + facility.getId() + "/";
+        String prefix = "image/review/building-" + facility.getBuilding().getId() + "/facility-" + facility.getId() + "/";
 
         try {
 
