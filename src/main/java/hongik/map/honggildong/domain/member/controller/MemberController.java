@@ -11,7 +11,10 @@ import hongik.map.honggildong.domain.review.dto.ReviewResponseDTO;
 import hongik.map.honggildong.domain.review.entity.Review;
 import hongik.map.honggildong.domain.review.service.ReviewService;
 import hongik.map.honggildong.global.apiPayload.ApiResponse;
+import hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus;
+import hongik.map.honggildong.global.apiPayload.exception.GeneralException;
 import hongik.map.honggildong.global.security.service.CustomUserDetails;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
@@ -34,7 +37,13 @@ public class MemberController {
 
     //회원 정보 조회
     @GetMapping("")
+    @Operation(summary = "회원 정보 조회")
     public ApiResponse<MemberResponseDTO.General> getMember(@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        if(userDetails==null){
+            throw new GeneralException(ErrorStatus.UNAUTHORIZED);
+        }
+
         Member member = memberService.getMemberByUserDetails(userDetails);
         MemberResponseDTO.General body = MemberConverter.toGeneralDTO(member);
 

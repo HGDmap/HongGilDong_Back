@@ -6,7 +6,13 @@ import hongik.map.honggildong.global.security.dto.AuthRequestDTO;
 
 public class MemberConverter {
     public static MemberResponseDTO.General toGeneralDTO(Member member) {
-        return null;
+        return MemberResponseDTO.General.builder()
+                .id(member.getId())
+                .name(member.getName())
+                .nickname(member.getNickname())
+                .profilePic(member.getProfilePic())
+                .email(member.getEmail())
+                .build();
     }
     public static Member toMember(String realName, String nickname, String email, String encodedPW) {
         return Member.builder()
