@@ -155,7 +155,24 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public List<ImageResponseDTO.PresignedDTO> uploadNonReviewImages(String type, Long id, List<String> fileNames) {
-        return List.of();
+
+
+        String key = "image/represents";
+        switch (type){
+            case "FACILITY":
+                key=key+"/facility-"+id;
+                break;
+            case "BUILDING":
+                key=key+"/building-"+id;
+                break;
+            case "EVENT":
+                key=key+"/event-"+id;
+                break;
+            case "MEMBER":
+                key=key+"/user-"+id;
+        }
+
+        return issuePresignedURL(fileNames, key);
     }
 
     @Override
