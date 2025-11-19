@@ -154,7 +154,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public List<ImageResponseDTO.PresignedDTO> uploadNonReviewImages(String type, Long id, List<String> fileNames) {
+    public List<ImageResponseDTO.PresignedDTO> uploadGeneralImages(String type, Long id, List<String> fileNames) {
 
 
         String key = "image/represents";

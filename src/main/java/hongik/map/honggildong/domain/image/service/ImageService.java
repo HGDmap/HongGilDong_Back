@@ -16,7 +16,7 @@ public interface ImageService {
 
     void deleteImages(List<String> images);
 
-    List<ImageResponseDTO.PresignedDTO>  uploadNonReviewImages(String type, Long id, List<String> fileNames);
+    List<ImageResponseDTO.PresignedDTO> uploadGeneralImages(String type, Long id, List<String> fileNames);
 
     void deleteOneImage(String image);
 }

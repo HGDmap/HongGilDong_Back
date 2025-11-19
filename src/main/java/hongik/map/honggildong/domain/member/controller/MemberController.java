@@ -36,7 +36,7 @@ public class MemberController {
     private final LikeService likeService;
 
     //회원 정보 조회
-    @GetMapping("")
+    @GetMapping("/profile")
     @Operation(summary = "회원 정보 조회")
     public ApiResponse<MemberResponseDTO.General> getMember(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
@@ -52,8 +52,13 @@ public class MemberController {
 
     //회원 프로필 변경
     @PatchMapping("/mypage/profile")
+    @Operation(summary = "회원 프로필 수정", description = "프로필 사진 삭제 시 빈 문자열로 보낼 것")
     public ApiResponse<MemberResponseDTO.General> updateMember(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                             @RequestBody MemberRequestDTO.UpdateProfile request) {
+
+        if(userDetails==null){
+            throw new GeneralException(ErrorStatus.UNAUTHORIZED);
+        }
         Member member = memberService.getMemberByUserDetails(userDetails);
         MemberResponseDTO.General body = MemberConverter.toGeneralDTO(memberService.updateProfile(member, request));
 
@@ -63,6 +68,11 @@ public class MemberController {
     //회원 탈퇴
     @DeleteMapping("/delete")
     public ApiResponse<String> deleteMember(@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        if(userDetails==null){
+            throw new GeneralException(ErrorStatus.UNAUTHORIZED);
+        }
+
         Member member = memberService.getMemberByUserDetails(userDetails);
         memberService.deleteMember(member);
 
@@ -73,6 +83,10 @@ public class MemberController {
     @GetMapping("/mypage/reviews")
     public ApiResponse<ReviewResponseDTO.MyGeneralPage> getMyReviews(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                      @ParameterObject Pageable pageable) {
+        if(userDetails==null){
+            throw new GeneralException(ErrorStatus.UNAUTHORIZED);
+        }
+
         Member member = memberService.getMemberByUserDetails(userDetails);
         Page<Review> reviews = reviewService.getReviewListOf(member,pageable);
         List<Long> likedReviewIds = new ArrayList<>();
@@ -85,6 +99,10 @@ public class MemberController {
     @GetMapping("/mypage/likes")
     public ApiResponse<Page<ReviewResponseDTO.General>> getMyLikes(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                    @ParameterObject Pageable pageable) {
+        if(userDetails==null){
+            throw new GeneralException(ErrorStatus.UNAUTHORIZED);
+        }
+
         Member member = memberService.getMemberByUserDetails(userDetails);
         Page<Review> reviews = likeService.getLikedReviewListOf(member,pageable);
         Page<ReviewResponseDTO.General> body = reviews.map(rw->ReviewConverter.toGeneralDTO(rw,true));
