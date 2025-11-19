@@ -45,7 +45,10 @@ public enum ErrorStatus implements BaseCode {
 
 
     // S3 관련 에러 응답
-    S3_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S3500", "S3에서 정보를 가져오는 중 에러가 발생했습니다.");
+    S3_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S3500", "S3에서 정보를 가져오는 중 에러가 발생했습니다."),
+
+    // 이벤트 관련 에러 응답
+    EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "EVENT404", "해당 이벤트가 존재하지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
