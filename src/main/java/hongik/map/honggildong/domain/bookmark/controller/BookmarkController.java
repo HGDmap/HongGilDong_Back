@@ -51,7 +51,7 @@ public class BookmarkController {
 
 
     // 전체 즐겨찾기 조회
-    @PostMapping("/all")
+    @GetMapping("/all")
     @Operation(summary = "전체 즐겨찾기 조회")
     public ApiResponse<BookmarkResponseDTO.All> allBookmarkList(@AuthenticationPrincipal CustomUserDetails userDetails) {
 

@@ -31,4 +31,8 @@ public class Event extends BaseEntity {
     private LocalDateTime endTime;
 
     private String mainImg;
+
+    private String homepage;
+
+    private String callNumber;
 }
