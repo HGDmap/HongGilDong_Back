@@ -68,6 +68,7 @@ public class ReviewServiceImpl implements ReviewService {
     public Review createReviewOf(Member member, ReviewRequestDTO.create request, Facility facility) {
 
         Review review = ReviewConverter.toReview(member, facility, request);
+        facility.addRecommendCnt(request.getRecommend());
 
         return reviewRepository.save(review);
     }

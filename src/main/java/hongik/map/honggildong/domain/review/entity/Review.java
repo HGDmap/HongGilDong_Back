@@ -31,7 +31,7 @@ public class Review extends BaseEntity {
 
     private String content;
 
-    private Integer rating;
+    private Double rating;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "review_image", joinColumns = @JoinColumn(name = "review_id"))

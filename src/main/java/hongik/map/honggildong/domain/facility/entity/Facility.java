@@ -72,7 +72,19 @@ public class Facility extends BaseEntity {
     private Long meetingCnt = 0L;
 
     @Builder.Default
-    private Long flavorCnt = 0L;
+    private Long foodCnt = 0L;
+
+    public Facility addRecommendCnt(HashTag hashTag) {
+        switch (hashTag){
+            case FOOD : foodCnt++; break;
+            case MEETING : meetingCnt++; break;
+            case STUDY : studyCnt++; break;
+            case REST : restCnt++; break;
+            case VIEW : viewCnt++; break;
+        }
+
+        return this;
+    }
 
 
 

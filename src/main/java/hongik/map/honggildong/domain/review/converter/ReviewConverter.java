@@ -19,6 +19,7 @@ public class ReviewConverter {
                 .member(member)
                 .facility(facility)
                 .content(request.getContent())
+                .rating(request.getRating())
                 .images(request.getPhotoList()==null ? new ArrayList<>() : request.getPhotoList())
                 .build();
     }
