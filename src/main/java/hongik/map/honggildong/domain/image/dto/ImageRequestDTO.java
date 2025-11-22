@@ -18,7 +18,6 @@ public class ImageRequestDTO {
     public static class UploadOtherImageDTO {
         //@Schema(description = "반드시 파일명.확장자 형식 리스트로 줄 것", example = "image.png")
         private List<String> fileNames;
-        private String type;
         private Long id;
     }
 

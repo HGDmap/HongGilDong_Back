@@ -4,6 +4,7 @@ import hongik.map.honggildong.domain.facility.entity.Facility;
 import hongik.map.honggildong.domain.facility.repository.FacilityRepository;
 import hongik.map.honggildong.domain.image.converter.ImageConverter;
 import hongik.map.honggildong.domain.image.dto.ImageResponseDTO;
+import hongik.map.honggildong.domain.image.dto.RequestType;
 import hongik.map.honggildong.domain.member.entity.Member;
 import hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus;
 import hongik.map.honggildong.global.apiPayload.exception.GeneralException;
@@ -154,23 +155,16 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public List<ImageResponseDTO.PresignedDTO> uploadGeneralImages(String type, Long id, List<String> fileNames) {
+    public List<ImageResponseDTO.PresignedDTO> uploadGeneralImages(RequestType type, Long id, List<String> fileNames) {
 
 
         String key = "image/represents";
-        switch (type){
-            case "FACILITY":
-                key=key+"/facility-"+id;
-                break;
-            case "BUILDING":
-                key=key+"/building-"+id;
-                break;
-            case "EVENT":
-                key=key+"/event-"+id;
-                break;
-            case "MEMBER":
-                key=key+"/user-"+id;
-        }
+        key = switch (type) {
+            case FACILITY -> key + "/facility-" + id;
+            case BUILDING -> key + "/building-" + id;
+            case EVENT -> key + "/event-" + id;
+            case MEMBER -> key + "/user-" + id;
+        };
 
         return issuePresignedURL(fileNames, key);
     }
