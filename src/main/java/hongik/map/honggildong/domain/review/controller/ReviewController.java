@@ -65,7 +65,7 @@ public class ReviewController {
         Member member = memberService.getMemberByUserDetails(userDetails);
 
         Review review = reviewService.createReviewOf(member, request, facility);
-        ReviewResponseDTO.General body = ReviewConverter.toGeneralDTO(review, false);
+        ReviewResponseDTO.General body = ReviewConverter.toGeneralDTO(review, false, member.getId());
 
         return ApiResponse.onSuccess(body);
     }

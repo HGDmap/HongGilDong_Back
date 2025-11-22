@@ -31,8 +31,13 @@ public class ReviewServiceImpl implements ReviewService {
 
     //특정 멤버의 리뷰 리스트
     @Override
-    public Page<Review> getReviewListOf(Member member, Pageable pageable) {
-        return null;
+    public ReviewResponseDTO.MyGeneralPage getReviewListOf(Member member, Pageable pageable) {
+
+        Page<Review> reviews = reviewRepository.findAllByMemberWithFacility(member, pageable);
+        List<Long> reviewIds =reviews.getContent().stream().map(Review::getId).toList();
+        List<Long> likedReviewIds = likeRepository.findAllByReviewsAndMemberId(member.getId(),reviewIds);
+
+        return ReviewConverter.toMyGeneralPage(reviews, likedReviewIds);
     }
 
     //특정 시설의 리뷰 리스트
@@ -44,7 +49,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         List<Long> likedReviews = likeRepository.findAllByReviewsAndMemberId(memberId,reviewIds);
 
-        return ReviewConverter.toGeneralPageDTO(reviewPage, likedReviews);
+        return ReviewConverter.toGeneralPageDTO(reviewPage, likedReviews, memberId);
     }
 
     //특정 리뷰 1개
@@ -55,7 +60,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         Boolean isLiked = likeRepository.existsByMemberIdAndReviewIdAndStatus(memberId,reviewId, true);
 
-        return ReviewConverter.toGeneralDTO(review, isLiked);
+        return ReviewConverter.toGeneralDTO(review, isLiked, memberId);
     }
 
     @Override
@@ -108,6 +113,6 @@ public class ReviewServiceImpl implements ReviewService {
         Boolean isLiked = likeRepository.existsByMemberIdAndReviewIdAndStatus(memberId,updatedReview.getId(), true);
 
 
-        return ReviewConverter.toGeneralDTO(updatedReview,isLiked);
+        return ReviewConverter.toGeneralDTO(updatedReview,isLiked, memberId);
     }
 }

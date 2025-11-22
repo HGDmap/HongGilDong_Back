@@ -4,8 +4,11 @@ import hongik.map.honggildong.domain.likes.converter.LikeConverter;
 import hongik.map.honggildong.domain.likes.entity.Likes;
 import hongik.map.honggildong.domain.likes.repository.LikeRepository;
 import hongik.map.honggildong.domain.member.entity.Member;
+import hongik.map.honggildong.domain.review.converter.ReviewConverter;
+import hongik.map.honggildong.domain.review.dto.ReviewResponseDTO;
 import hongik.map.honggildong.domain.review.entity.Review;
 import hongik.map.honggildong.domain.review.repository.ReviewRepository;
+import hongik.map.honggildong.global.apiPayload.ApiResponse;
 import hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus;
 import hongik.map.honggildong.global.apiPayload.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,8 +28,11 @@ public class LikeServiceImpl implements LikeService {
 
 
     @Override
-    public Page<Review> getLikedReviewListOf(Member member, Pageable pageable) {
-        return null;
+    public ReviewResponseDTO.GeneralPage getLikedReviewListOf(Member member, Pageable pageable) {
+
+        Page<Likes> likes = likeRepository.findAllLikedReviewsByMember(member,pageable);
+
+        return ReviewConverter.toGeneralPageDTO(likes, member.getId());
     }
 
     @Override

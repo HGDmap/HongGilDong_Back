@@ -12,5 +12,9 @@ public class MemberResponseDTO {
     @NoArgsConstructor
     public static class General{
         private Long id;
+        private String name;
+        private String nickname;
+        private String profilePic;
+        private String email;
     }
 }

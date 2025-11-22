@@ -40,4 +40,19 @@ public class Member extends BaseEntity {
     private List<BookmarkFolder> bookmarkFolders;
 
 
+    public Member updateProfile(String nickname, String profilePic){
+        if(nickname!=null&&!nickname.isBlank()){
+            this.nickname=nickname;
+        }
+        if(profilePic!=null){
+            if(!profilePic.isBlank()){
+                this.profilePic=profilePic;
+            }else{
+                this.profilePic=null;
+            }
+        }
+
+        return this;
+    }
+
 }

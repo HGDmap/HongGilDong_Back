@@ -10,6 +10,7 @@ public class MemberRequestDTO {
 
     @Getter
     public static class UpdateProfile{
-
+        private String nickname;
+        private String profilePic;
     }
 }
