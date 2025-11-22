@@ -4,7 +4,6 @@ import hongik.map.honggildong.domain.bookmark.dto.BookmarkResponseDTO;
 import hongik.map.honggildong.domain.bookmark.entity.Bookmark;
 import hongik.map.honggildong.domain.bookmark.entity.BookmarkType;
 import hongik.map.honggildong.domain.bookmark.repository.BookmarkRepository;
-import hongik.map.honggildong.domain.bookmarkFolder.dto.BookmarkFolderResponseDTO;
 import hongik.map.honggildong.domain.bookmarkFolder.entity.BookmarkFolder;
 import hongik.map.honggildong.domain.bookmarkFolder.repository.BookmarkFolderRepository;
 import hongik.map.honggildong.domain.building.entity.Building;
@@ -19,10 +18,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -178,12 +178,20 @@ public class BookmarkServiceImpl implements BookmarkService {
                     if (bm.getType() == BookmarkType.FACILITY) {
                         Facility fac = bm.getFacility();
                         Building b = fac.getBuilding();
+                        List<String> images = Stream.of(
+                                        fac.getMainImg(),
+                                        fac.getMainImg2(),
+                                        fac.getMainImg3()
+                                )
+                                .filter(img -> img != null && !img.isBlank())
+                                .toList();
+
                         return BookmarkResponseDTO.FacilityDetail.builder()
                                 .id(fac.getId())
                                 .name(fac.getName())
                                 .location(fac.getNode().getName())
                                 .openInfo(fac.getOpenInfo())
-                                .image(fac.getMainImg())
+                                .images(images)
                                 .latitude(b.getLatitude())
                                 .longitude(b.getLongitude())
                                 .nodeId(fac.getNode().getId())
@@ -192,10 +200,14 @@ public class BookmarkServiceImpl implements BookmarkService {
 
                     if (bm.getType() == BookmarkType.BUILDING) {
                         Building b = bm.getBuilding();
+                        List<String> images = Stream.of(b.getMainImg())
+                                .filter(img -> img != null && !img.isBlank())
+                                .toList();
+
                         return BookmarkResponseDTO.BuildingDetail.builder()
                                 .id(b.getId())
                                 .name(b.getName())
-                                .image(b.getMainImg())
+                                .images(images)
                                 .latitude(b.getLatitude())
                                 .longitude(b.getLongitude())
                                 .nodeId(b.getMainNode().getId())

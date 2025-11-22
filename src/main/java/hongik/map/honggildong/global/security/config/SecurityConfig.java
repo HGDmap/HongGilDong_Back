@@ -55,7 +55,8 @@ public class SecurityConfig {
                                 "/facility/*/details",
                                 "/building/*/details",
                                 "/directions/**",
-                                "/events/**"
+                                "/events/**",
+                                "/recommend/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 );

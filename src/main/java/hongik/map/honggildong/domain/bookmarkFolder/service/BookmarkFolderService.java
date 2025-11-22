@@ -2,9 +2,7 @@ package hongik.map.honggildong.domain.bookmarkFolder.service;
 
 import hongik.map.honggildong.domain.bookmark.dto.BookmarkResponseDTO;
 import hongik.map.honggildong.domain.bookmarkFolder.dto.BookmarkFolderRequestDTO;
-import hongik.map.honggildong.domain.bookmarkFolder.dto.BookmarkFolderResponseDTO;
 import hongik.map.honggildong.global.security.service.CustomUserDetails;
-import org.springframework.security.core.userdetails.UserDetails;
 
 public interface BookmarkFolderService {
 

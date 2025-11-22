@@ -1,20 +1,15 @@
 package hongik.map.honggildong.domain.bookmark.controller;
 
 import hongik.map.honggildong.domain.bookmark.dto.BookmarkResponseDTO;
-import hongik.map.honggildong.domain.bookmark.entity.Bookmark;
 import hongik.map.honggildong.domain.bookmark.entity.BookmarkType;
 import hongik.map.honggildong.domain.bookmark.service.BookmarkService;
-import hongik.map.honggildong.domain.bookmarkFolder.dto.BookmarkFolderResponseDTO;
 import hongik.map.honggildong.global.apiPayload.ApiResponse;
 import hongik.map.honggildong.global.security.service.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
