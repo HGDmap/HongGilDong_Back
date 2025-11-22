@@ -107,7 +107,7 @@ public class ReviewServiceImpl implements ReviewService {
         List<String> removalTarget = review.getImages();
         removalTarget.removeAll(newImageList);
 
-        Review updatedReview = review.update(request.getContent(), newImageList);
+        Review updatedReview = review.update(request, newImageList);
 
         imageService.deleteImages(removalTarget);
 
