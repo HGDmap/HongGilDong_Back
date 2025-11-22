@@ -65,20 +65,6 @@ public class MemberController {
         return ApiResponse.onSuccess(body);
     }
 
-    //회원 탈퇴
-    @DeleteMapping("/delete")
-    public ApiResponse<String> deleteMember(@AuthenticationPrincipal CustomUserDetails userDetails) {
-
-        if(userDetails==null){
-            throw new GeneralException(ErrorStatus.UNAUTHORIZED);
-        }
-
-        Member member = memberService.getMemberByUserDetails(userDetails);
-        memberService.deleteMember(member);
-
-        return ApiResponse.onSuccess("탈퇴가 완료되었습니다.");
-    }
-
     //내가 쓴 리뷰 리스트 조회
     @GetMapping("/mypage/reviews")
     @Operation(summary = "내가 쓴 리뷰 조회")
@@ -97,6 +83,7 @@ public class MemberController {
 
     //내가 좋아요한 리뷰 리스트 조회
     @GetMapping("/mypage/likes")
+    @Operation(summary = "좋아요한 리뷰 리스트 조회")
     public ApiResponse<ReviewResponseDTO.GeneralPage> getMyLikes(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                  @ParameterObject Pageable pageable) {
         if(userDetails==null){

@@ -16,7 +16,7 @@ public class ReviewResponseDTO {
         private Long id;
         private Boolean isMine;
         private String content;
-        private Integer rating;
+        private Double rating;
         private Long writerId;
         private String writerNickname;
         private String writerProfilePic;
@@ -48,7 +48,7 @@ public class ReviewResponseDTO {
         private String facilityName;
         private Long facilityId;
         private String content;
-        private Integer rating;
+        private Double rating;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
         private List<String> photoList;

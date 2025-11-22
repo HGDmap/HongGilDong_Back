@@ -1,5 +1,5 @@
 package hongik.map.honggildong.domain.facility.entity;
 
 public enum HashTag {
-    REST, STUDY
+    REST, STUDY, VIEW, MEETING, FOOD, NONE
 }

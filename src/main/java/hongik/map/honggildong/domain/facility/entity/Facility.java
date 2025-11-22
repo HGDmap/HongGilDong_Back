@@ -59,4 +59,33 @@ public class Facility extends BaseEntity {
     @Nullable
     private String mainImg3;
 
+    @Builder.Default
+    private Long restCnt = 0L;
+
+    @Builder.Default
+    private Long studyCnt = 0L;
+
+    @Builder.Default
+    private Long viewCnt = 0L;
+
+    @Builder.Default
+    private Long meetingCnt = 0L;
+
+    @Builder.Default
+    private Long foodCnt = 0L;
+
+    public Facility addRecommendCnt(HashTag hashTag) {
+        switch (hashTag){
+            case FOOD : foodCnt++; break;
+            case MEETING : meetingCnt++; break;
+            case STUDY : studyCnt++; break;
+            case REST : restCnt++; break;
+            case VIEW : viewCnt++; break;
+        }
+
+        return this;
+    }
+
+
+
 }

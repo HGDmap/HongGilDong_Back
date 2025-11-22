@@ -68,6 +68,7 @@ public class ReviewServiceImpl implements ReviewService {
     public Review createReviewOf(Member member, ReviewRequestDTO.create request, Facility facility) {
 
         Review review = ReviewConverter.toReview(member, facility, request);
+        facility.addRecommendCnt(request.getRecommend());
 
         return reviewRepository.save(review);
     }
@@ -106,7 +107,7 @@ public class ReviewServiceImpl implements ReviewService {
         List<String> removalTarget = review.getImages();
         removalTarget.removeAll(newImageList);
 
-        Review updatedReview = review.update(request.getContent(), newImageList);
+        Review updatedReview = review.update(request, newImageList);
 
         imageService.deleteImages(removalTarget);
 

@@ -31,7 +31,7 @@ public class Review extends BaseEntity {
 
     private String content;
 
-    private Integer rating;
+    private Double rating;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "review_image", joinColumns = @JoinColumn(name = "review_id"))
@@ -43,8 +43,9 @@ public class Review extends BaseEntity {
     @Builder.Default
     private Long likedCnt = 0L;
 
-    public Review update(String content, List<String> photoList) {
-        this.content = content;
+    public Review update(ReviewRequestDTO.create request, List<String> photoList) {
+        this.content = request.getContent();
+        this.rating = request.getRating();
         this.images = photoList;
 
         return this;
