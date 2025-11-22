@@ -4,19 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import hongik.map.honggildong.domain.bookmarkFolder.dto.BookmarkFolderResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.DayOfWeek;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 
 public class BookmarkResponseDTO {
 
@@ -56,7 +49,7 @@ public class BookmarkResponseDTO {
         private Long id;
         private String name;
         private String location;
-        private String image;
+        private List<String> images;
         private Double latitude;
         private Double longitude;
         private Long nodeId;
@@ -72,7 +65,7 @@ public class BookmarkResponseDTO {
         @JsonIgnore
         private String openInfo;
 
-        private String image;
+        private List<String> images;
         private Double latitude;
         private Double longitude;
         private Long nodeId;
