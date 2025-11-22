@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ReviewService {
-    Page<Review> getReviewListOf(Member member, Pageable pageable);
+    ReviewResponseDTO.MyGeneralPage getReviewListOf(Member member, Pageable pageable);
     ReviewResponseDTO.GeneralPage getReviewListOf(Facility facility, Long memberId, Pageable pageable);
 
     ReviewResponseDTO.General getReviewById(Long memberId, Long reviewId);

@@ -14,7 +14,9 @@ public class ReviewResponseDTO {
     @NoArgsConstructor
     public static class General {
         private Long id;
+        private Boolean isMine;
         private String content;
+        private Integer rating;
         private Long writerId;
         private String writerNickname;
         private String writerProfilePic;

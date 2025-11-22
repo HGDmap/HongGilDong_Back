@@ -81,31 +81,30 @@ public class MemberController {
 
     //내가 쓴 리뷰 리스트 조회
     @GetMapping("/mypage/reviews")
+    @Operation(summary = "내가 쓴 리뷰 조회")
     public ApiResponse<ReviewResponseDTO.MyGeneralPage> getMyReviews(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                      @ParameterObject Pageable pageable) {
         if(userDetails==null){
             throw new GeneralException(ErrorStatus.UNAUTHORIZED);
         }
 
-        Member member = memberService.getMemberByUserDetails(userDetails);
-        Page<Review> reviews = reviewService.getReviewListOf(member,pageable);
-        List<Long> likedReviewIds = new ArrayList<>();
-        ReviewResponseDTO.MyGeneralPage body = ReviewConverter.toMyGeneralPage(reviews,likedReviewIds);
+        Member member = userDetails.getMember();
+
+        ReviewResponseDTO.MyGeneralPage body = reviewService.getReviewListOf(member,pageable);
 
         return ApiResponse.onSuccess(body);
     }
 
     //내가 좋아요한 리뷰 리스트 조회
     @GetMapping("/mypage/likes")
-    public ApiResponse<Page<ReviewResponseDTO.General>> getMyLikes(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                                   @ParameterObject Pageable pageable) {
+    public ApiResponse<ReviewResponseDTO.GeneralPage> getMyLikes(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                 @ParameterObject Pageable pageable) {
         if(userDetails==null){
             throw new GeneralException(ErrorStatus.UNAUTHORIZED);
         }
 
-        Member member = memberService.getMemberByUserDetails(userDetails);
-        Page<Review> reviews = likeService.getLikedReviewListOf(member,pageable);
-        Page<ReviewResponseDTO.General> body = reviews.map(rw->ReviewConverter.toGeneralDTO(rw,true));
+        Member member = userDetails.getMember();
+        ReviewResponseDTO.GeneralPage body = likeService.getLikedReviewListOf(member,pageable);
 
         return ApiResponse.onSuccess(body);
     }
