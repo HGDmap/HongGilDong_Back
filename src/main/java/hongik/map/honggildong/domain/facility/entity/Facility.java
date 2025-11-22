@@ -59,4 +59,21 @@ public class Facility extends BaseEntity {
     @Nullable
     private String mainImg3;
 
+    @Builder.Default
+    private Long restCnt = 0L;
+
+    @Builder.Default
+    private Long studyCnt = 0L;
+
+    @Builder.Default
+    private Long viewCnt = 0L;
+
+    @Builder.Default
+    private Long meetingCnt = 0L;
+
+    @Builder.Default
+    private Long flavorCnt = 0L;
+
+
+
 }
