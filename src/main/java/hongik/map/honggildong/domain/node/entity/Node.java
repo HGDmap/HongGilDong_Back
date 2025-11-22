@@ -29,7 +29,7 @@ public class Node extends BaseEntity {
     private Double latitude;
     private Double longitude;
     //상대 고도
-    private Long height;
+    private Double height;
 
     @Nullable
     private String mainImg;
