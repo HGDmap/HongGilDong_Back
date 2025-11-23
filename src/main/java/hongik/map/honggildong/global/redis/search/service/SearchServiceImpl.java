@@ -98,7 +98,7 @@ public class SearchServiceImpl implements SearchService{
                     finalResult.setIsBookmarkedTrue();
             }
             //mainImg 넣기
-            finalResult.getPhotoList().add(Objects.equals((String) raw[4], "") ? null:((String)raw[4]));
+            finalResult.getPhotoList().add(((String)raw[4]).isBlank() ? null:((String)raw[4]));
 
             //시설의 경우 사진 추가
             if(((String)raw[0]).equals("FACILITY")){
