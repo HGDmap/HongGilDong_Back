@@ -28,11 +28,12 @@ public class LikeServiceImpl implements LikeService {
 
 
     @Override
-    public ReviewResponseDTO.GeneralPage getLikedReviewListOf(Member member, Pageable pageable) {
+    public ReviewResponseDTO.MyLikedGeneralPage getLikedReviewListOf(Member member, Pageable pageable) {
 
         Page<Likes> likes = likeRepository.findAllLikedReviewsByMember(member,pageable);
 
-        return ReviewConverter.toGeneralPageDTO(likes, member.getId());
+
+        return ReviewConverter.toMyLikedGeneralPageDTO(likes, member.getId());
     }
 
     @Override

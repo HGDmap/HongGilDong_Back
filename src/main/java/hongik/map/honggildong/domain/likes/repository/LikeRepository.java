@@ -43,6 +43,7 @@ public interface LikeRepository extends JpaRepository<Likes,Long> {
         FROM Likes l
         JOIN FETCH l.review r
         JOIN FETCH r.member m
+        JOIN FETCH r.facility f
         WHERE l.member = :member AND l.status = true
     """,
     countQuery =  """
