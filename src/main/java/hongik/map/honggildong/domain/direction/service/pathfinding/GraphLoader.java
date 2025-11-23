@@ -21,7 +21,7 @@ public class GraphLoader {
     private final Graph graph;
     private final NodeRepository nodeRepository;
     private final EdgeRepository edgeRepository;
-    public static final double FLOOR_HEIGHT_M = 2.3;
+//    public static final double FLOOR_HEIGHT_M = 2.3;
 
     private final Object reloadLock = new Object();
 
@@ -75,23 +75,27 @@ public class GraphLoader {
         }
     }
 
+
     private double calculateDistance(Node startNode, Node endNode) {
-        // 1. 위도/경도를 이용해 수평 거리를 '하버사인 공식'으로 계산
         double planarDistance = haversineMeters(
                 startNode.getLatitude(), startNode.getLongitude(),
                 endNode.getLatitude(), endNode.getLongitude()
         );
 
-        // 2. 층(height)이 같은 경우, 수평 거리가 최종 거리
-        if (Objects.equals(startNode.getHeight(), endNode.getHeight())) {
+
+        double z1 = startNode.getHeight();
+        double z2 = endNode.getHeight();
+
+        double dz = Math.abs(z1 - z2);
+
+        if (dz == 0L) {
             return planarDistance;
         }
-        // 3. 층이 다를 경우, 수직 높이 차이를 고려한 3D 직선 거리 계산
-        else {
-            double heightDifference = Math.abs(startNode.getHeight() - endNode.getHeight()) * FLOOR_HEIGHT_M;
-            // 피타고라스 정리를 이용해 3D 대각선 거리 계산
-            return Math.sqrt(Math.pow(planarDistance, 2) + Math.pow(heightDifference, 2));
-        }
+
+        return Math.sqrt(
+                planarDistance * planarDistance +
+                        dz * dz
+        );
     }
 
 
