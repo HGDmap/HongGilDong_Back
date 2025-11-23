@@ -51,6 +51,23 @@ public class FacilityController {
         return ApiResponse.onSuccess(body);
     }
 
+    //특정 시설의 전체 리뷰 조회
+    @GetMapping("/{facilityId}/rating")
+    @Operation(summary = "특정 시설의 전체 평점 및 추천 항목 현황 조회")
+    public ApiResponse<FacilityResponseDTO.AvgRatingAndRecommendationStats> getFacilityRatings(@PathVariable("facilityId") Long facilityId,
+                                                                                               @AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                                               @ParameterObject Pageable pageable) {
+        if(userDetails==null){
+            throw new GeneralException(ErrorStatus.UNAUTHORIZED);
+        }
+
+        Facility facility = facilityService.getFacilityById(facilityId);
+
+        FacilityResponseDTO.AvgRatingAndRecommendationStats body = facilityService.getAvgRatings(facility);
+
+        return ApiResponse.onSuccess(body);
+    }
+
     //특정 시설의 상세 정보 조회
     @GetMapping("/{facilityId}/details")
     @Operation(summary = "특정 시설의 상세 정보 조회")

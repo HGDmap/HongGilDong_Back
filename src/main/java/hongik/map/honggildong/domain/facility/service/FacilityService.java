@@ -8,4 +8,6 @@ public interface FacilityService {
     Facility getFacilityById(Long facilityId);
 
     FacilityResponseDTO.Detail getFacilityDetails(Long facilityId, CustomUserDetails userDetails);
+
+    FacilityResponseDTO.AvgRatingAndRecommendationStats getAvgRatings(Facility facility);
 }

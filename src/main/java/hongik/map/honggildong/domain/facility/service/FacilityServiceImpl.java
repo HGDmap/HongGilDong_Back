@@ -5,6 +5,7 @@ import hongik.map.honggildong.domain.facility.converter.FacilityConverter;
 import hongik.map.honggildong.domain.facility.dto.FacilityResponseDTO;
 import hongik.map.honggildong.domain.facility.entity.Facility;
 import hongik.map.honggildong.domain.facility.repository.FacilityRepository;
+import hongik.map.honggildong.domain.review.repository.ReviewRepository;
 import hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus;
 import hongik.map.honggildong.global.apiPayload.exception.GeneralException;
 import hongik.map.honggildong.global.security.service.CustomUserDetails;
@@ -21,6 +22,7 @@ import java.util.List;
 public class FacilityServiceImpl implements FacilityService {
     private final FacilityRepository facilityRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final ReviewRepository reviewRepository;
 
 
     @Override
@@ -46,5 +48,12 @@ public class FacilityServiceImpl implements FacilityService {
 
         return FacilityConverter.toDetailDTO(facility, isBookmarked, photoList);
 
+    }
+
+    @Override
+    public FacilityResponseDTO.AvgRatingAndRecommendationStats getAvgRatings(Facility facility) {
+        Double avgRating = reviewRepository.findAvgRatingByFacilityId(facility.getId());
+
+        return FacilityConverter.toAvgRatingAndRecommendationStatsDTO(facility,avgRating);
     }
 }
