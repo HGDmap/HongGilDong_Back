@@ -1,5 +1,6 @@
 package hongik.map.honggildong.domain.facility.dto;
 
+import hongik.map.honggildong.domain.facility.entity.Facility;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +9,25 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 public class FacilityResponseDTO {
+    @Builder @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AvgRatingAndRecommendationStats {
+        private Double avgRating;
+        private RecommendationStats recommendation;
+    }
+
+    @Builder @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RecommendationStats {
+        private Long meetingCnt;
+        private Long studyCnt;
+        private Long restCnt;
+        private Long viewCnt;
+        private Long foodCnt;
+    }
+
     @Builder @Getter
     @NoArgsConstructor
     @AllArgsConstructor

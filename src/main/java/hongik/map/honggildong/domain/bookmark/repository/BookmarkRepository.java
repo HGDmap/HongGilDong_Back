@@ -40,4 +40,6 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     Boolean existsByMemberAndFacility(Member member, Facility facility);
 
     Boolean existsByMemberAndBuilding(Member member, Building building);
+
+    List<Long> findAllFacilityIdByMemberAndFacilityIn(Member member, List<Facility> facilities);
 }

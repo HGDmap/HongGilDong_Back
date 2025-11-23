@@ -28,4 +28,18 @@ public class FacilityConverter {
                 .build();
     }
 
+    public static FacilityResponseDTO.AvgRatingAndRecommendationStats toAvgRatingAndRecommendationStatsDTO(Facility facility, Double avgRating) {
+        FacilityResponseDTO.RecommendationStats recommendation = FacilityResponseDTO.RecommendationStats.builder()
+                .foodCnt(facility.getFoodCnt())
+                .meetingCnt(facility.getMeetingCnt())
+                .restCnt(facility.getRestCnt())
+                .studyCnt(facility.getStudyCnt())
+                .viewCnt(facility.getViewCnt())
+                .build();
+
+        return FacilityResponseDTO.AvgRatingAndRecommendationStats.builder()
+                .avgRating(Math.round(avgRating*10)/10.0)
+                .recommendation(recommendation)
+                .build();
+    }
 }

@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface LikeService {
-    ReviewResponseDTO.GeneralPage getLikedReviewListOf(Member member, Pageable pageable);
+    ReviewResponseDTO.MyLikedGeneralPage getLikedReviewListOf(Member member, Pageable pageable);
 
     Boolean createOrDeleteLikeOf(Member member, Review review);
 }

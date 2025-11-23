@@ -40,14 +40,14 @@ public class SearchController {
 
     @GetMapping("/{query}")
     @Operation(summary = "검색 버튼 눌렀을 때", description = "특정 자동완성 안 누르고 바로 검색 버튼 누를 시")
-    public ApiResponse<SearchResultDTO.resultList> search(@PathVariable("query") String query,
+    public ApiResponse<SearchResultDTO.ResultList> search(@PathVariable("query") String query,
                                                           @AuthenticationPrincipal CustomUserDetails userDetails){
         Member member=null;
 
         if(userDetails != null){
             member = userDetails.getMember(); //주의: 현재 Member는 컨텍스트에 등록된 객체가 아닌 POJO
         }
-        SearchResultDTO.resultList body = searchService.search(query, member);
+        SearchResultDTO.ResultList body = searchService.search(query, member);
 
         return ApiResponse.onSuccess(body);
     }

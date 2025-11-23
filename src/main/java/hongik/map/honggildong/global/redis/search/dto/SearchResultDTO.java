@@ -23,7 +23,7 @@ public class SearchResultDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
-    public static class result{
+    public static class Result {
         private Long id;
         private String name;
         private String type;
@@ -46,8 +46,8 @@ public class SearchResultDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
-    public static class resultList{
+    public static class ResultList {
         private Integer listSize;
-        private List<result> resultList;
+        private List<Result> resultList;
     }
 }

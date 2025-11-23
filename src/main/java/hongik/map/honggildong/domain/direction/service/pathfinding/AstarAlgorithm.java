@@ -23,7 +23,7 @@ public class AstarAlgorithm {
     private static final double ELEVATOR_DOOR_SEC = 4.0;      // 엘리베이터 문 여닫이 시간 (s)
     private static final double ELEVATOR_WAIT_SEC = 8.0;      // 평균 대기 시간 (s)
 
-    private static double cmToM(Long cm) { return (cm == null) ? 0.0 : cm / 100.0; }
+    private static double cmToM(Double cm) { return (cm == null) ? 0.0 : cm / 100.0; }
 
     public List<Long> findPath(Long startId, Long goalId) {
         Node start = graph.getNode(startId).orElseThrow(() -> new GeneralException(ErrorStatus.NODE_NOT_FOUND));

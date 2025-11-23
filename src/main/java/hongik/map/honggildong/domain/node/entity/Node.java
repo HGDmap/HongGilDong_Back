@@ -21,6 +21,7 @@ public class Node extends BaseEntity {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @Nullable
     private Building building;
 
     @Enumerated(EnumType.STRING)

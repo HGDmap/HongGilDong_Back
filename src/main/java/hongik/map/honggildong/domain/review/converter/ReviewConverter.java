@@ -61,19 +61,6 @@ public class ReviewConverter {
                 .build();
     }
 
-    public static ReviewResponseDTO.GeneralPage toGeneralPageDTO(Page<Likes> likes, Long memberId){
-
-        List<ReviewResponseDTO.General> content = likes.getContent().stream().map(l->toGeneralDTO(l.getReview(),true, memberId)).toList();
-
-        return ReviewResponseDTO.GeneralPage.builder()
-                .reviewList(content)
-                .isFirst(likes.isFirst())
-                .isLast(likes.isLast())
-                .totalPages(likes.getTotalPages())
-                .totalElements(likes.getTotalElements())
-                .size(likes.getSize())
-                .build();
-    }
 
     public static ReviewResponseDTO.MyGeneral toMyGeneralDTO(Review review, Boolean isLiked) {
 
@@ -106,6 +93,44 @@ public class ReviewConverter {
                 .totalPages(reviews.getTotalPages())
                 .totalElements(reviews.getTotalElements())
                 .size(reviews.getSize())
+                .build();
+
+    }
+
+
+    public static ReviewResponseDTO.MyLikedGeneral toMyLikedGeneralDTO(Review review, Long memberId) {
+
+        Member writer = review.getMember();
+        Facility facility = review.getFacility();
+
+        return ReviewResponseDTO.MyLikedGeneral.builder()
+                .id(review.getId())
+                .isMine(writer.getId().equals(memberId))
+                .rating(review.getRating())
+                .facilityId(facility.getId())
+                .facilityName(facility.getName())
+                .writerId(writer.getId())
+                .writerNickname(writer.getNickname())
+                .writerProfilePic(writer.getProfilePic())
+                .content(review.getContent())
+                .createdAt(review.getCreatedAt())
+                .updatedAt(review.getUpdatedAt())
+                .photoList(review.getImages())
+                .isLiked(true)
+                .likedCnt(review.getLikedCnt())
+                .build();
+
+    }
+    public static ReviewResponseDTO.MyLikedGeneralPage toMyLikedGeneralPageDTO(Page<Likes> likes, Long memberId) {
+        List<ReviewResponseDTO.MyLikedGeneral> content = likes.getContent().stream().map(l->toMyLikedGeneralDTO(l.getReview(), memberId)).toList();
+
+        return ReviewResponseDTO.MyLikedGeneralPage.builder()
+                .reviewList(content)
+                .isFirst(likes.isFirst())
+                .isLast(likes.isLast())
+                .totalPages(likes.getTotalPages())
+                .totalElements(likes.getTotalElements())
+                .size(likes.getSize())
                 .build();
 
     }

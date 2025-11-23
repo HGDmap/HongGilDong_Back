@@ -36,4 +36,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
         WHERE r.member = :member
     """)
     Page<Review> findAllByMemberWithFacility(@Param("member") Member member, Pageable pageable);
+
+    @Query("""
+    select avg(r.rating)
+    from Review r
+    where r.facility.id = :facilityId
+    """)
+    Double findAvgRatingByFacilityId(@Param("facilityId") Long facilityId);
 }
