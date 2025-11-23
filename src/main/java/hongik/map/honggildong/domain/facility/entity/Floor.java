@@ -3,7 +3,7 @@ package hongik.map.honggildong.domain.facility.entity;
 public enum Floor {
     B5,B4,B3,B2,B1,
     LOBBY,
-    F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12;
+    F1,F2,F3,F4,F5,F6,F7,F8,F9,F10,F11,F12,F13,F14,F15,F16;
 
     // 층 순서 값을 리턴
     public static int getOrder(Floor floor) {

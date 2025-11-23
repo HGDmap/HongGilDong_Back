@@ -53,6 +53,7 @@ public class SecurityConfig {
                                 "/auth/**",
                                 "/search/**",
                                 "/facility/*/details",
+                                "/facility/*/collection",
                                 "/building/*/details",
                                 "/directions/**",
                                 "/events/**",

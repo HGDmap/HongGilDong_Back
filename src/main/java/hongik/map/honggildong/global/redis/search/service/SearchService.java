@@ -10,5 +10,5 @@ public interface SearchService {
 
     List<String> findAllIndexedData();
 
-    SearchResultDTO.resultList search(String query, Member member);
+    SearchResultDTO.ResultList search(String query, Member member);
 }
