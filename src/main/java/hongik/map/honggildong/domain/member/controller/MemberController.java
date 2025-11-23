@@ -84,14 +84,14 @@ public class MemberController {
     //내가 좋아요한 리뷰 리스트 조회
     @GetMapping("/mypage/likes")
     @Operation(summary = "좋아요한 리뷰 리스트 조회")
-    public ApiResponse<ReviewResponseDTO.GeneralPage> getMyLikes(@AuthenticationPrincipal CustomUserDetails userDetails,
+    public ApiResponse<ReviewResponseDTO.MyLikedGeneralPage> getMyLikes(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                  @ParameterObject Pageable pageable) {
         if(userDetails==null){
             throw new GeneralException(ErrorStatus.UNAUTHORIZED);
         }
 
         Member member = userDetails.getMember();
-        ReviewResponseDTO.GeneralPage body = likeService.getLikedReviewListOf(member,pageable);
+        ReviewResponseDTO.MyLikedGeneralPage body = likeService.getLikedReviewListOf(member,pageable);
 
         return ApiResponse.onSuccess(body);
     }

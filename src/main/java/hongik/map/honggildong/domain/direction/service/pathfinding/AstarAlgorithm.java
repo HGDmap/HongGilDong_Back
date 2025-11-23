@@ -28,7 +28,6 @@ public class AstarAlgorithm {
         return (double) n.getHeight();
     }
 
-
     public List<Long> findPath(Long startId, Long goalId) {
         Node start = graph.getNode(startId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NODE_NOT_FOUND));

@@ -4,13 +4,10 @@ import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import com.redis.lettucemod.search.SearchResults;
 import hongik.map.honggildong.domain.bookmark.dto.JPQLBookmarkDTO;
 import hongik.map.honggildong.domain.bookmark.repository.BookmarkRepository;
-import hongik.map.honggildong.domain.bookmarkFolder.repository.BookmarkFolderRepository;
 import hongik.map.honggildong.domain.facility.entity.Facility;
 import hongik.map.honggildong.domain.facility.repository.FacilityRepository;
-import hongik.map.honggildong.domain.image.service.ImageService;
 import hongik.map.honggildong.domain.member.entity.Member;
-import hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus;
-import hongik.map.honggildong.global.apiPayload.exception.GeneralException;
+import hongik.map.honggildong.global.redis.search.converter.SearchConverter;
 import hongik.map.honggildong.global.redis.search.dto.SearchResultDTO;
 import hongik.map.honggildong.global.redis.search.repository.SearchRepository;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +53,7 @@ public class SearchServiceImpl implements SearchService{
     }
 
     @Override
-    public SearchResultDTO.resultList search(String query, Member member) {
+    public SearchResultDTO.ResultList search(String query, Member member) {
 
         //빌딩, 시설, 이벤트, 노드 join 해서 search 후
         //각 엔티티의 이름, id, 좌표, 노드이름, 사진 등
@@ -93,23 +90,15 @@ public class SearchServiceImpl implements SearchService{
             bookmarkedSet.add(Pair.of(b.getType(),b.getId()));
         }
 
-        List<SearchResultDTO.result> body = rawResult.stream().map(raw->{
+        List<SearchResultDTO.Result> body = rawResult.stream().map(raw->{
             //북마크 된 리스트에 존재하는 아이디라면 true, 비로그인자는 항상 false
-            SearchResultDTO.result finalResult = SearchResultDTO.result.builder()
-                    .type((String)raw[0])
-                    .id((Long)raw[1])
-                    .name((String)raw[2])
-                    .description((String) raw[3])
-                    .latitude((Double)raw[5])
-                    .longitude((Double)raw[6])
-                    .nodeId((Long)raw[7])
-                    .build();
+            SearchResultDTO.Result finalResult = SearchConverter.toResultDTO(raw);
             if(member!=null){
                 if(bookmarkedSet.contains(Pair.of(finalResult.getType(), finalResult.getId())))
                     finalResult.setIsBookmarkedTrue();
             }
             //mainImg 넣기
-            finalResult.getPhotoList().add(Objects.equals((String) raw[4], "") ? null:((String)raw[4]));
+            finalResult.getPhotoList().add(((String)raw[4]).isBlank() ? null:((String)raw[4]));
 
             //시설의 경우 사진 추가
             if(((String)raw[0]).equals("FACILITY")){
@@ -122,7 +111,7 @@ public class SearchServiceImpl implements SearchService{
         }).toList();
 
 
-        return SearchResultDTO.resultList.builder().listSize(body.size()).resultList(body).build();
+        return SearchConverter.toResultListDTO(body);
     }
 
 }

@@ -1,6 +1,7 @@
 package hongik.map.honggildong.domain.facility.repository;
 
 import hongik.map.honggildong.domain.facility.entity.Facility;
+import hongik.map.honggildong.domain.facility.entity.FacilityType;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +22,6 @@ public interface FacilityRepository extends JpaRepository<Facility, Long> {
     """)
     @NotNull
     Optional<Facility> findById(@Param("facilityId") @NotNull Long facilityId);
+
+    List<Facility> findAllByType(FacilityType type);
 }

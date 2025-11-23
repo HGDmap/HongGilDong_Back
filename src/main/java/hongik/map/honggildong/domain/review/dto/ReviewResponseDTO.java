@@ -69,6 +69,38 @@ public class ReviewResponseDTO {
 
     }
 
+    @Builder @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class MyLikedGeneral {
+        private Long id;
+        private Boolean isMine;
+        private Long facilityId;
+        private String facilityName;
+        private String content;
+        private Double rating;
+        private Long writerId;
+        private String writerNickname;
+        private String writerProfilePic;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        private List<String> photoList;
+        private Boolean isLiked;
+        private Long likedCnt;
+    }
+
+    @Builder @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class MyLikedGeneralPage {
+        private List<MyLikedGeneral> reviewList;
+        private int totalPages;
+        private int size;
+        private Long totalElements;
+        private Boolean isFirst;
+        private Boolean isLast;
+
+    }
 
 
 }

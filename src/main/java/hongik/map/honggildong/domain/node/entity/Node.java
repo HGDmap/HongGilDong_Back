@@ -21,6 +21,7 @@ public class Node extends BaseEntity {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @Nullable
     private Building building;
 
     @Enumerated(EnumType.STRING)
@@ -29,7 +30,7 @@ public class Node extends BaseEntity {
     private Double latitude;
     private Double longitude;
     //상대 고도
-    private Long height;
+    private Double height;
 
     @Nullable
     private String mainImg;
