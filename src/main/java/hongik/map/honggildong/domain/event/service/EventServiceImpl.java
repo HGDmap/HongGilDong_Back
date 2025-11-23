@@ -6,12 +6,14 @@ import hongik.map.honggildong.domain.building.repository.BuildingRepository;
 import hongik.map.honggildong.domain.event.dto.EventResponseDTO;
 import hongik.map.honggildong.domain.event.entity.Event;
 import hongik.map.honggildong.domain.event.repository.EventRepository;
+import hongik.map.honggildong.domain.node.entity.Node;
 import hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus;
 import hongik.map.honggildong.global.apiPayload.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,10 +58,17 @@ public class EventServiceImpl implements EventService {
                 .eventEnd(event.getEndTime())
                 .build();
 
+        Node eventNode = event.getNode();
+        List<String> images = new ArrayList<>();
+
+        if (eventNode.getMainImg() != null) {
+            images.add(eventNode.getMainImg());
+        }
+
         EventResponseDTO.Location location = EventResponseDTO.Location.builder()
-                .images(Collections.singletonList(event.getNode().getBuilding().getMainImg()))
-                .nodeId(event.getNode().getId())
-                .buildingName(event.getNode().getBuilding().getName())
+                .images(images)
+                .nodeId(eventNode.getId())
+                .buildingName(eventNode.getBuilding().getName())
                 .build();
 
         return new EventResponseDTO.Detail(
