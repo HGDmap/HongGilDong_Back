@@ -5,12 +5,14 @@ import hongik.map.honggildong.domain.node.entity.Node;
 import hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus;
 import hongik.map.honggildong.global.apiPayload.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class AstarAlgorithm {
 
     private final Graph graph;
@@ -18,11 +20,14 @@ public class AstarAlgorithm {
 
     // 보행 시간 관련 상수
     private static final double WALK_SPEED_MPS = 1.10;
-    private static final double STAIRS_UP_SEC_PER_LVL = 30.0;  // 레벨 1 올라갈 때 대략 몇 초
-    private static final double STAIRS_DOWN_SEC_PER_LVL = 6.0;
+    private static final double STAIRS_UP_SEC_PER_LVL = 35.0;  // 레벨 1 올라갈 때 대략 몇 초
+    private static final double STAIRS_DOWN_SEC_PER_LVL = 20.0;
     private static final double ELEVATOR_SEC_PER_LVL = 1.5;
-    private static final double ELEVATOR_DOOR_SEC = 6.0;
+    private static final double ELEVATOR_DOOR_SEC = 5.0;
     private static final double ELEVATOR_WAIT_SEC = 50.0;
+
+    private static final double BASE_EDGE_SEC = 0.1;  // 엣지 하나 지날 때마다 기본 3초 페널티
+    private static final double MIN_EDGE_SEC = 5.0;
 
     private static Double safeHeight(Node n) {
         return (double) n.getHeight();
@@ -52,11 +57,29 @@ public class AstarAlgorithm {
 
         Set<Long> closed = new HashSet<>();
 
+        // [LOG] 시작/목표 로그
+        log.info("[ASTAR] Start findPath: startId={}, goalId={}", startId, goalId);
+        log.info("[ASTAR] Initial fScore[{}]={}", start.getId(), fScore.get(start.getId()));
+
         while (!open.isEmpty()) {
             Long curId = open.poll();
 
+            // [LOG] 현재 확장 중인 노드와 현재까지 비용
+            log.info("[ASTAR] >>> Pop node={} from open-set, gScore={}, fScore={}",
+                    curId,
+                    gScore.getOrDefault(curId, Double.POSITIVE_INFINITY),
+                    fScore.getOrDefault(curId, Double.POSITIVE_INFINITY)
+            );
+
             if (curId.equals(goal.getId())) {
-                return reconstruct(cameFrom, curId);
+                List<Long> finalPath = reconstruct(cameFrom, curId);
+
+                // [LOG] 최종 경로 출력
+                log.info("[ASTAR] Goal reached. Final path: {}", finalPath);
+                log.info("[ASTAR] Final total time (sec): {}",
+                        estimateDurationSeconds(finalPath));
+
+                return finalPath;
             }
             closed.add(curId);
 
@@ -82,6 +105,12 @@ public class AstarAlgorithm {
 
                 double tentative = gScore.get(curId) + edgeCost;
 
+                // [LOG] 이웃 노드 후보 경로 정보
+                log.info("[ASTAR]   Candidate: {} -> {} | edgeTime={}, heightCost={}, edgeCost={}, tentativeG={}",
+                        curId, nbId, edgeTime, heightCost, edgeCost, tentative);
+
+
+                double oldG = gScore.getOrDefault(nbId, Double.POSITIVE_INFINITY);
                 if (tentative < gScore.getOrDefault(nbId, Double.POSITIVE_INFINITY)) {
                     cameFrom.put(nbId, curId);
                     gScore.put(nbId, tentative);
@@ -91,14 +120,24 @@ public class AstarAlgorithm {
                     double remainHeight = Math.abs(goalHeight - h2);
                     double hHeightCost  = HEIGHT_COST_WEIGHT * remainHeight;
 
-                    fScore.put(nbId, tentative + hTime + hHeightCost);
+                    double newF = tentative + hTime + hHeightCost;
+                    fScore.put(nbId, newF);
+
+                    // [LOG] 이 후보가 실제로 채택되었는지 (갱신되었는지)
+                    log.info("[ASTAR]   -> UPDATE best path to node {} via {}, oldG={}, newG={}, newF={}",
+                            nbId, curId, oldG, tentative, newF);
 
                     open.remove(nbId);
                     open.add(nbId);
+                } else {
+                    // [LOG] 기존 경로가 더 좋아서 버린 후보
+                    log.info("[ASTAR]   -> SKIP candidate via {} to {} (oldG={} <= tentativeG={})",
+                            curId, nbId, oldG, tentative);
                 }
             }
         }
 
+        log.warn("[ASTAR] Path not found from {} to {}", startId, goalId);
         throw new GeneralException(ErrorStatus.PATH_NOT_FOUND);
     }
 
@@ -169,7 +208,14 @@ public class AstarAlgorithm {
                         (toCode != null && toCode.name().contains("ELEVATOR"));
 
         // 1) 수평 이동 시간
-        double timeSec = (horizM > 0) ? (horizM / WALK_SPEED_MPS) : 0.0;
+//        double timeSec = (horizM > 0) ? (horizM / WALK_SPEED_MPS) : 0.0;
+        double timeSec = BASE_EDGE_SEC;
+
+        if (horizM > 0) {
+            timeSec += horizM / WALK_SPEED_MPS;
+        } else {
+            timeSec += MIN_EDGE_SEC; // 같은 위치여도 최소 시간
+        }
 
         // 2) 수직 이동 시간 (상대고도 레벨 기반)
         if (involvesStairs && dLevel > 0) {

@@ -37,7 +37,9 @@ public class BuildingServiceImpl implements BuildingService{
 
         List<String> photoList = new ArrayList<>();
 
-        photoList.add(building.getMainImg());
+        if (building.getMainImg() != null) {
+            photoList.add(building.getMainImg());
+        }
         //photoList.add(building.getMainImg2());
         //photoList.add(building.getMainImg3());
 

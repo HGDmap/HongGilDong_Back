@@ -77,25 +77,40 @@ public class GraphLoader {
 
 
     private double calculateDistance(Node startNode, Node endNode) {
+
+        // 1. 계단/엘리베이터면 그래프 거리 코스트는 0으로
+        var fromCode = startNode.getCode();
+        var toCode   = endNode.getCode();
+
+        boolean involvesStairs =
+                (fromCode != null && fromCode.name().contains("STAIR")) ||
+                        (toCode != null && toCode.name().contains("STAIR"));
+
+        boolean involvesElevator =
+                (fromCode != null && fromCode.name().contains("ELEVATOR")) ||
+                        (toCode != null && toCode.name().contains("ELEVATOR"));
+
+        if (involvesStairs || involvesElevator) {
+            // 그래프 상에서는 “연결만 되어있다” 정도 의미로 0 코스트 유지
+            // 실제 시간 비용은 A*의 edgeDurationSeconds()가 처리
+            return 0.0;
+        }
+
+        // 2. 나머지 일반 엣지는 기존 방식대로 3D 거리 사용
         double planarDistance = haversineMeters(
                 startNode.getLatitude(), startNode.getLongitude(),
-                endNode.getLatitude(), endNode.getLongitude()
+                endNode.getLatitude(),   endNode.getLongitude()
         );
-
 
         double z1 = startNode.getHeight();
         double z2 = endNode.getHeight();
-
         double dz = Math.abs(z1 - z2);
 
-        if (dz == 0L) {
+        if (dz == 0.0) {
             return planarDistance;
         }
 
-        return Math.sqrt(
-                planarDistance * planarDistance +
-                        dz * dz
-        );
+        return Math.sqrt(planarDistance * planarDistance + dz * dz);
     }
 
 
