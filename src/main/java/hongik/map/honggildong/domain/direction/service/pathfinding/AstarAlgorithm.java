@@ -20,13 +20,17 @@ public class AstarAlgorithm {
 
     // 보행 시간 관련 상수
     private static final double WALK_SPEED_MPS = 1.10;
-    private static final double STAIRS_UP_SEC_PER_LVL = 35.0;  // 레벨 1 올라갈 때 대략 몇 초
-    private static final double STAIRS_DOWN_SEC_PER_LVL = 20.0;
+    private static final double STAIRS_UP_SEC_PER_LVL = 20.0;  // 레벨 1 올라갈 때 대략 몇 초
+    private static final double STAIRS_DOWN_SEC_PER_LVL = 15.0;
     private static final double ELEVATOR_SEC_PER_LVL = 1.5;
-    private static final double ELEVATOR_DOOR_SEC = 5.0;
-    private static final double ELEVATOR_WAIT_SEC = 50.0;
+    private static final double ELEVATOR_DOOR_SEC = 4.0;
+    private static final double ELEVATOR_WAIT_SEC = 30.0;
 
-    private static final double BASE_EDGE_SEC = 0.1;  // 엣지 하나 지날 때마다 기본 3초 페널티
+    // 엘베-계단 이동
+    private static final int SHORT_TRIP_HOP_THRESHOLD = 3;
+    private static final double SHORT_TRIP_VERTICAL_PENALTY_SEC = 60.0;
+
+    private static final double BASE_EDGE_SEC = 0.05;  // 엣지 하나 지날 때마다 기본 3초 페널티
     private static final double MIN_EDGE_SEC = 5.0;
 
     private static Double safeHeight(Node n) {
@@ -46,6 +50,10 @@ public class AstarAlgorithm {
         // 경로 복원용
         Map<Long, Long> cameFrom = new HashMap<>();
 
+        Map<Long, Integer> hopCount = new HashMap<>();
+        Map<Long, Integer> lastVerticalMode = new HashMap<>();
+        Map<Long, Integer> lastVerticalHop = new HashMap<>();
+
         Comparator<Long> cmp = Comparator.comparingDouble(
                 id -> fScore.getOrDefault(id, Double.POSITIVE_INFINITY)
         );
@@ -53,6 +61,9 @@ public class AstarAlgorithm {
 
         gScore.put(start.getId(), 0.0);
         fScore.put(start.getId(), heuristicTime(start, goal));
+        hopCount.put(start.getId(), 0);
+        lastVerticalMode.put(start.getId(), 0);
+        lastVerticalHop.put(start.getId(), 0);
         open.add(start.getId());
 
         Set<Long> closed = new HashSet<>();
@@ -92,45 +103,87 @@ public class AstarAlgorithm {
 
                 Node nb = e.getEndNode();
 
+                // --- 1) hop(엣지 수) 계산 ---
+                int curHop = hopCount.getOrDefault(curId, 0);
+                int newHop = curHop + 1;
 
+                // --- 2) 기본 물리 시간 (거리 + 층수) ---
                 double edgeTime = edgeDurationSeconds(curNode, nb, e);
 
+                // --- 3) 이 엣지가 계단/엘베인지 판단 ---
+                var fromCode = curNode.getCode();
+                var toCode = nb.getCode();
 
+                boolean involvesStairs =
+                        (fromCode != null && fromCode.name().contains("STAIR")) ||
+                                (toCode != null && toCode.name().contains("STAIR"));
+
+                boolean involvesElevator =
+                        (fromCode != null && fromCode.name().contains("ELEVATOR")) ||
+                                (toCode != null && toCode.name().contains("ELEVATOR"));
+
+                int currentMode = 0; // 0: 없음, 1: 계단, 2: 엘베
+                if (involvesStairs) currentMode = 1;
+                else if (involvesElevator) currentMode = 2;
+
+                int prevMode = lastVerticalMode.getOrDefault(curId, 0);
+                int prevVerticalHop = lastVerticalHop.getOrDefault(curId, 0);
+
+                // --- 4) 시작 후 3엣지 이내에서 계단/엘베를 쓰면 패널티 ---
+                if (currentMode != 0 && newHop <= SHORT_TRIP_HOP_THRESHOLD) {
+                    edgeTime += SHORT_TRIP_VERTICAL_PENALTY_SEC;
+                }
+
+                // --- 5) 3엣지 이내 계단↔엘베 모드 전환이면 추가 패널티 ---
+                if (currentMode != 0 && prevMode != 0 &&
+                        currentMode != prevMode &&
+                        prevVerticalHop > 0 &&
+                        (newHop - prevVerticalHop) <= SHORT_TRIP_HOP_THRESHOLD) {
+                    edgeTime += SHORT_TRIP_VERTICAL_PENALTY_SEC;
+                }
+
+                // --- 6) 기존 높이 기반 cost 그대로 사용 ---
                 double h1 = safeHeight(curNode);
                 double h2 = safeHeight(nb);
                 double heightEffect = Math.abs(h2 - h1);
                 double heightCost   = HEIGHT_COST_WEIGHT * heightEffect;
 
                 double edgeCost = edgeTime + heightCost;
-
                 double tentative = gScore.get(curId) + edgeCost;
 
-                // [LOG] 이웃 노드 후보 경로 정보
                 log.info("[ASTAR]   Candidate: {} -> {} | edgeTime={}, heightCost={}, edgeCost={}, tentativeG={}",
                         curId, nbId, edgeTime, heightCost, edgeCost, tentative);
 
-
                 double oldG = gScore.getOrDefault(nbId, Double.POSITIVE_INFINITY);
-                if (tentative < gScore.getOrDefault(nbId, Double.POSITIVE_INFINITY)) {
+                if (tentative < oldG) {
                     cameFrom.put(nbId, curId);
                     gScore.put(nbId, tentative);
+                    hopCount.put(nbId, newHop);
+
+                    // 수직 모드를 실제로 썼다면, "마지막 수직 모드" 갱신
+                    int newPrevMode = prevMode;
+                    int newPrevHop = prevVerticalHop;
+                    if (currentMode != 0) {
+                        newPrevMode = currentMode;
+                        newPrevHop = newHop;
+                    }
+                    lastVerticalMode.put(nbId, newPrevMode);
+                    lastVerticalHop.put(nbId, newPrevHop);
 
                     double hTime        = heuristicTime(nb, goal);
-                    double goalHeight     = safeHeight(goal);
+                    double goalHeight   = safeHeight(goal);
                     double remainHeight = Math.abs(goalHeight - h2);
                     double hHeightCost  = HEIGHT_COST_WEIGHT * remainHeight;
 
                     double newF = tentative + hTime + hHeightCost;
                     fScore.put(nbId, newF);
 
-                    // [LOG] 이 후보가 실제로 채택되었는지 (갱신되었는지)
                     log.info("[ASTAR]   -> UPDATE best path to node {} via {}, oldG={}, newG={}, newF={}",
                             nbId, curId, oldG, tentative, newF);
 
                     open.remove(nbId);
                     open.add(nbId);
                 } else {
-                    // [LOG] 기존 경로가 더 좋아서 버린 후보
                     log.info("[ASTAR]   -> SKIP candidate via {} to {} (oldG={} <= tentativeG={})",
                             curId, nbId, oldG, tentative);
                 }
