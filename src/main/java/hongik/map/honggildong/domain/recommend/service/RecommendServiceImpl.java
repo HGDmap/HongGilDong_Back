@@ -3,14 +3,17 @@ package hongik.map.honggildong.domain.recommend.service;
 import hongik.map.honggildong.domain.bookmark.dto.BookmarkResponseDTO;
 import hongik.map.honggildong.domain.bookmark.entity.Bookmark;
 import hongik.map.honggildong.domain.bookmark.entity.BookmarkType;
+import hongik.map.honggildong.domain.bookmark.repository.BookmarkRepository;
 import hongik.map.honggildong.domain.bookmarkFolder.entity.BookmarkFolder;
 import hongik.map.honggildong.domain.building.entity.Building;
 import hongik.map.honggildong.domain.facility.entity.Facility;
 import hongik.map.honggildong.domain.facility.entity.HashTag;
 import hongik.map.honggildong.domain.facility.repository.FacilityRepository;
+import hongik.map.honggildong.domain.member.entity.Member;
 import hongik.map.honggildong.domain.recommend.dto.RecommendResponseDTO;
 import hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus;
 import hongik.map.honggildong.global.apiPayload.exception.GeneralException;
+import hongik.map.honggildong.global.security.service.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,13 +49,16 @@ public class RecommendServiceImpl implements RecommendService {
             HashTag.MEETING,
             HashTag.VIEW
     );
+    private final BookmarkRepository bookmarkRepository;
 
 
-    public RecommendResponseDTO.General getRecommendation() {
+    public RecommendResponseDTO.General getRecommendation(CustomUserDetails user) {
+
+        Member member = (user != null) ? user.getMember() : null;
 
         List<RecommendResponseDTO.FacilityList> lists =
                 RECOMMEND_TAGS.stream()
-                        .map(this::buildFacilityListForTag)
+                        .map(tag -> buildFacilityListForTag(tag, member))
                         .filter(fl -> fl.getFacilityList() != null && !fl.getFacilityList().isEmpty())
                         .toList();
 
@@ -62,16 +68,16 @@ public class RecommendServiceImpl implements RecommendService {
     }
 
 
-    private RecommendResponseDTO.FacilityList buildFacilityListForTag(HashTag tag) {
+    private RecommendResponseDTO.FacilityList buildFacilityListForTag(HashTag tag, Member member) {
         String sortField = SORT_FIELD_BY_TAG.get(tag);
 
         Slice<Facility> page = facilityRepository.findAll(
                 PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, sortField))
         );
 
-        List<BookmarkResponseDTO.FacilityDetail> facilities =
+        List<RecommendResponseDTO.FacilityDetail> facilities =
                 page.getContent().stream()
-                        .map(this::toFacilityDetail)
+                        .map(content -> toFacilityDetail(content, member))
                         .toList();
 
         return RecommendResponseDTO.FacilityList.builder()
@@ -81,7 +87,7 @@ public class RecommendServiceImpl implements RecommendService {
     }
 
     // dto 구현 부분
-    private BookmarkResponseDTO.FacilityDetail toFacilityDetail(Facility fac) {
+    private RecommendResponseDTO.FacilityDetail toFacilityDetail(Facility fac, Member member) {
         Building b = fac.getBuilding();
 
         List<String> images = Stream.of(
@@ -92,7 +98,12 @@ public class RecommendServiceImpl implements RecommendService {
                 .filter(img -> img != null && !img.isBlank())
                 .toList();
 
-        return BookmarkResponseDTO.FacilityDetail.builder()
+        boolean isBookmarked = false;
+        if (member != null) {
+            isBookmarked = bookmarkRepository.existsByMemberAndFacility(member, fac);
+        }
+
+       return  RecommendResponseDTO.FacilityDetail.builder()
                 .id(fac.getId())
                 .name(fac.getName())
                 .location(fac.getNode().getName())
@@ -101,7 +112,9 @@ public class RecommendServiceImpl implements RecommendService {
                 .latitude(b.getLatitude())
                 .longitude(b.getLongitude())
                 .nodeId(fac.getNode().getId())
+                .isBookmarked(isBookmarked)
                 .build();
+
     }
 
 }
