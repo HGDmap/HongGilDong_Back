@@ -1,6 +1,6 @@
 package hongik.map.honggildong.domain.building.dto;
 
-import hongik.map.honggildong.domain.facility.entity.Floor;
+import hongik.map.honggildong.domain.node.entity.Floor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

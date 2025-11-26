@@ -15,6 +15,5 @@ public interface BuildingRepository extends JpaRepository<Building, Long> {
     LEFT JOIN FETCH b.facilities
     WHERE b.id = :buildingId
     """)
-    Optional<Building> findWithFacilitiesById(@Param("id") Long buildingId);
-
+    Optional<Building> findWithFacilities(@Param("buildingId") Long buildingId);
 }

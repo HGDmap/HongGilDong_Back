@@ -37,5 +37,8 @@ public class Building extends BaseEntity {
     private Node mainNode;
 
     @OneToMany(mappedBy = "building", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Node> nodes;
+
+    @OneToMany(mappedBy = "building", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Facility> facilities;
 }
