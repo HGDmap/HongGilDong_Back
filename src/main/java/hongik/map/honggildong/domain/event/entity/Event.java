@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder
@@ -27,8 +28,8 @@ public class Event extends BaseEntity {
 
     private String description;
 
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private LocalDate startTime;
+    private LocalDate endTime;
 
     private String mainImg;
 
