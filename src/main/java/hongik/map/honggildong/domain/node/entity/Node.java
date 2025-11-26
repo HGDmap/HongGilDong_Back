@@ -1,6 +1,7 @@
 package hongik.map.honggildong.domain.node.entity;
 
 import hongik.map.honggildong.domain.building.entity.Building;
+import hongik.map.honggildong.domain.facility.entity.Facility;
 import hongik.map.honggildong.global.common.BaseEntity;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
@@ -8,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Builder
 @Entity
@@ -23,6 +26,13 @@ public class Node extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @Nullable
     private Building building;
+
+    @OneToMany(mappedBy = "node", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Facility> facilities;
+
+    //건물 내 층수
+    @Enumerated(EnumType.STRING)
+    private Floor floor;
 
     @Enumerated(EnumType.STRING)
     private NodeCode code;

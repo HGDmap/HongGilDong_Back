@@ -7,6 +7,8 @@ import hongik.map.honggildong.domain.building.entity.Building;
 import hongik.map.honggildong.domain.building.repository.BuildingRepository;
 import hongik.map.honggildong.domain.facility.converter.FacilityConverter;
 import hongik.map.honggildong.domain.facility.entity.Facility;
+import hongik.map.honggildong.domain.node.entity.Node;
+import hongik.map.honggildong.domain.node.repository.NodeRepository;
 import hongik.map.honggildong.global.apiPayload.code.status.ErrorStatus;
 import hongik.map.honggildong.global.apiPayload.exception.GeneralException;
 import hongik.map.honggildong.global.security.service.CustomUserDetails;
@@ -24,11 +26,12 @@ public class BuildingServiceImpl implements BuildingService{
 
     private final BuildingRepository buildingRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final NodeRepository nodeRepository;
 
 
     @Override
     public BuildingResponseDTO.Detail getBuildingDetails(Long buildingId, CustomUserDetails userDetails) {
-        Building building = buildingRepository.findById(buildingId)
+        Building building = buildingRepository.findWithFacilities(buildingId)
                 .orElseThrow(()->new GeneralException(ErrorStatus.BUILDING_NOT_FOUND));
 
 

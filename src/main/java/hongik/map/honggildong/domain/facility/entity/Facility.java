@@ -1,8 +1,8 @@
 package hongik.map.honggildong.domain.facility.entity;
 
 import hongik.map.honggildong.domain.bookmark.entity.Bookmark;
-import hongik.map.honggildong.domain.bookmarkFolder.entity.BookmarkFolder;
 import hongik.map.honggildong.domain.building.entity.Building;
+import hongik.map.honggildong.domain.node.entity.Floor;
 import hongik.map.honggildong.domain.node.entity.Node;
 import hongik.map.honggildong.global.common.BaseEntity;
 import jakarta.annotation.Nullable;
@@ -39,9 +39,6 @@ public class Facility extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Nullable
     private HashTag hashTag;
-    //건물 내 층수
-    @Enumerated(EnumType.STRING)
-    private Floor floor;
 
     @Nullable
     private String phone;
