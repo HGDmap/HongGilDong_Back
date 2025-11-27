@@ -41,5 +41,12 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
     Boolean existsByMemberAndBuilding(Member member, Building building);
 
-    List<Long> findAllFacilityIdByMemberAndFacilityIn(Member member, List<Facility> facilities);
+    @Query("""
+    SELECT b.facility.id
+    FROM Bookmark b
+    WHERE b.member = :member
+      AND b.facility IN (:facilities)
+    """
+    )
+    List<Long> findAllFacilityIdByMemberAndFacilityIn(@Param("member") Member member, @Param("facilities") List<Facility> facilities);
 }
