@@ -102,7 +102,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public ImageResponseDTO.ImagePage getPhotoPageOfFacility(Facility facility, String continuationToken, int pageSize) {
 
-        String prefix = "image/review/building/" + facility.getBuilding().getId() + "/facility/" + facility.getId() + "/";
+        String prefix = "image/review/building-" + facility.getBuilding().getId() + "/facility-" + facility.getId() + "/";
 
         try {
 
